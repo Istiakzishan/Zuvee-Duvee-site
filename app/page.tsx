@@ -1,22 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import CommerceExperience, { addProductToCart, openAccount, openCart } from "./CommerceExperience";
+import { products } from "./products/product-data";
 
-type Product = {
-  name: string;
-  age: string;
-  price: string;
-  tags: string[];
-  position: string;
-  href?: string;
-};
-
-const products: Product[] = [
-  { name: "Little Hands Activity Cube", age: "12m+", price: "৳ 2,450", tags: ["Fine motor", "Problem solving"], position: "13% center", href: "/products/little-hands-activity-cube" },
-  { name: "Soft Discovery Set", age: "4m+", price: "৳ 1,280", tags: ["Sensory", "Grasping"], position: "50% center", href: "/products/soft-discovery-set" },
-  { name: "Woodland Shape Puzzle", age: "3y+", price: "৳ 1,850", tags: ["Logic", "Hand-eye"], position: "86% center", href: "/products/woodland-shape-puzzle" },
-  { name: "Press & Turn Board", age: "18m+", price: "৳ 2,150", tags: ["Focus", "Fine motor"], position: "38% center", href: "/products/press-and-turn-board" },
-];
+type Product = typeof products[number];
 
 const development = [
   ["Fine Motor Skills", "Small movements that invite turning, grasping and placing."],
@@ -43,23 +31,25 @@ function ArrowIcon() {
 function ProductCard({ product, index }: { product: Product; index: number }) {
   const [liked, setLiked] = useState(false);
   const [added, setAdded] = useState(false);
+  const href = `/products/${product.slug}`;
+  const shortTags = product.tags.slice(0, 2);
   return (
     <article className="product-card">
       <div className="product-image" style={{ backgroundPosition: product.position }}>
-        {product.href && <a className="product-image-link" href={product.href} aria-label={`View details for ${product.name}`} />}
+        <a className="product-image-link" href={href} aria-label={`View details for ${product.name}`} />
         <span className="age-pill">{product.age}</span>
         <button className={`heart ${liked ? "active" : ""}`} onClick={() => setLiked(!liked)} aria-label={`${liked ? "Remove" : "Add"} ${product.name} ${liked ? "from" : "to"} wishlist`}>
           {liked ? "♥" : "♡"}
         </button>
-        <button className="quick-add" onClick={() => { setAdded(true); window.setTimeout(() => setAdded(false), 1400); }} aria-label={`Quick add ${product.name} to bag`}>
+        <button className="quick-add" onClick={() => { addProductToCart({ slug: product.slug, name: product.name, price: product.price, priceValue: product.priceValue, quantity: 1 }); setAdded(true); window.setTimeout(() => setAdded(false), 1400); }} aria-label={`Quick add ${product.name} to bag`}>
           {added ? "Added" : "+ Add"}
         </button>
       </div>
       <div className="product-info">
-        <div className="tags">{product.tags.map((tag) => <span key={tag}>{tag}</span>)}</div>
-        <h3>{product.href ? <a href={product.href}>{product.name}</a> : product.name}</h3>
+        <div className="tags">{shortTags.map((tag) => <span key={tag}>{tag}</span>)}</div>
+        <h3><a href={href}>{product.name}</a></h3>
         <p>{product.price}</p>
-        {product.href && <a className="product-details-link" href={product.href}>View product details →</a>}
+        <a className="product-details-link" href={href}>View product details →</a>
       </div>
     </article>
   );
@@ -73,6 +63,7 @@ export default function Home() {
 
   return (
     <main>
+      <CommerceExperience />
       <div className="announcement">Thoughtfully selected for growing little ones <span>·</span> Delivery across Bangladesh</div>
       <header className="site-header">
         <button className="mobile-icon" onClick={() => setMenuOpen(!menuOpen)} aria-expanded={menuOpen} aria-label="Open menu">☰</button>
@@ -82,8 +73,8 @@ export default function Home() {
         </nav>
         <div className="header-actions">
           <button onClick={() => setSearchOpen(!searchOpen)} aria-expanded={searchOpen}>Search</button>
-          <a className="desktop-only" href="#account">Account</a>
-          <a href="#bag">Bag <span>(0)</span></a>
+          <button className="desktop-only" type="button" onClick={openAccount} data-account-label>Account</button>
+          <button type="button" onClick={openCart}>Bag <span data-cart-count>(0)</span></button>
         </div>
         {searchOpen && <form className="search-panel" onSubmit={(e) => e.preventDefault()}><label htmlFor="search">What are you looking for?</label><input id="search" autoFocus placeholder="Search by product, age or skill" /><button type="button" onClick={() => setSearchOpen(false)}>Close</button></form>}
       </header>

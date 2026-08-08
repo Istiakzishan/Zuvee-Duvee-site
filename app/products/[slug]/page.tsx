@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import CommerceExperience from "../../CommerceExperience";
 import ProductPurchase from "../ProductPurchase";
 import { getProduct, products } from "../product-data";
 
@@ -65,6 +66,7 @@ export default async function ProductPage({ params }: PageProps) {
 
   return (
     <main className="product-page">
+      <CommerceExperience />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
 
@@ -72,7 +74,7 @@ export default async function ProductPage({ params }: PageProps) {
       <header className="product-header">
         <a className="logo" href="/" aria-label="Zuvee Duvee home">ZUVEE <i>DUVEE</i></a>
         <nav aria-label="Main navigation"><a href="/#products">Shop</a><a href="/#age">Shop by Age</a><a href="/#development">Development</a><a href="/#learn">Learn</a><a href="/#philosophy">Our Story</a></nav>
-        <div className="header-actions"><a href="/#products">Search</a><a className="desktop-only" href="#account">Account</a><a href="#bag">Bag <span>(0)</span></a></div>
+        <div className="header-actions"><a href="/#products">Search</a><button className="desktop-only" type="button" data-open-account data-account-label>Account</button><button type="button" data-open-cart>Bag <span data-cart-count>(0)</span></button></div>
       </header>
 
       <div className="product-breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a><span>›</span><a href="/#products">Products</a><span>›</span><span aria-current="page">{product.name}</span></div>
@@ -92,7 +94,7 @@ export default async function ProductPage({ params }: PageProps) {
           <p className="product-price">{product.price}</p>
           <p className="product-intro">{product.intro}</p>
           <div className="product-tags">{product.tags.map((tag) => <span key={tag}>{tag}</span>)}</div>
-          <ProductPurchase />
+          <ProductPurchase product={{ slug: product.slug, name: product.name, price: product.price, priceValue: product.priceValue }} />
           <div className="product-service-notes"><p><b>Delivery</b><span>Available across Bangladesh</span></p><p><b>Need guidance?</b><span>Ask us if this feels right for your child&apos;s current stage.</span></p></div>
         </div>
       </section>

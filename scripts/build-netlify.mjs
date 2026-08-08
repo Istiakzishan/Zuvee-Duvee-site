@@ -90,6 +90,7 @@ function shell({ title, description, content }) {
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/styles.css">
+  <script src="/commerce.js" defer></script>
 </head>
 <body>
 ${content}
@@ -102,7 +103,7 @@ function header() {
 <header class="site-header">
   <a class="logo" href="/" aria-label="Zuvee Duvee home">ZUVEE <i>DUVEE</i></a>
   <nav aria-label="Main navigation"><a href="/#products">Shop</a><a href="/#age">Shop by Age</a><a href="/#development">Development</a><a href="/#learn">Learn</a><a href="/#philosophy">Our Story</a></nav>
-  <div class="header-actions"><a href="/#products">Search</a><a class="desktop-only" href="/#account">Account</a><a href="/#bag">Bag <span>(0)</span></a></div>
+  <div class="header-actions"><a href="/#products">Search</a><button class="desktop-only" type="button" data-open-account data-account-label>Account</button><button type="button" data-open-cart>Bag <span data-cart-count>(0)</span></button></div>
 </header>`;
 }
 
@@ -116,7 +117,7 @@ function footer() {
 
 function productCard(product) {
   return `<article class="product-card">
-  <a class="product-image" href="/products/${product.slug}/" style="background-position:${product.position}" aria-label="View details for ${escapeHtml(product.name)}"><span class="age-pill">${product.age}</span><span class="heart">♡</span><span class="quick-add">+ Add</span></a>
+  <div class="product-image" style="background-position:${product.position}"><a class="product-image-link" href="/products/${product.slug}/" aria-label="View details for ${escapeHtml(product.name)}"></a><span class="age-pill">${product.age}</span><button class="heart" type="button">♡</button><button class="quick-add" type="button" data-add-cart data-slug="${product.slug}" data-name="${escapeHtml(product.name)}" data-price="${product.price}" data-price-value="${product.price.replace(/[^\d]/g, "")}">+ Add</button></div>
   <div class="product-info"><div class="tags">${product.tags.map((tag) => `<span>${tag}</span>`).join("")}</div><h3><a href="/products/${product.slug}/">${escapeHtml(product.name)}</a></h3><p>${product.price}</p><a class="product-details-link" href="/products/${product.slug}/">View product details →</a></div>
 </article>`;
 }
@@ -140,7 +141,7 @@ function homePage() {
 function productPage(product) {
   const content = `<main class="product-page">${header()}
   <div class="product-breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a><span>›</span><a href="/#products">Products</a><span>›</span><span aria-current="page">${escapeHtml(product.name)}</span></div>
-  <section class="product-detail-hero"><div class="product-gallery"><figure class="product-gallery-main"><img src="/hero-zuvee-duvee.webp" alt="${escapeHtml(product.name)} in a calm play setting"></figure><figure><img src="/story-zuvee-duvee.webp" alt="Small hands exploring a toy"></figure><figure><img src="/age-zuvee-duvee.webp" alt="Thoughtfully selected play objects" style="object-position:${product.position}"></figure></div><div class="product-summary"><p class="eyebrow">HANDS-ON DISCOVERY · ${product.age}</p><h1>${escapeHtml(product.name)}</h1><p class="product-price">${product.price}</p><p class="product-intro">${escapeHtml(product.intro)}</p><div class="product-tags">${product.tags.map((tag) => `<span>${tag}</span>`).join("")}</div><div class="purchase-panel"><div class="quantity-control"><button type="button">-</button><output>1</output><button type="button">+</button></div><button class="product-add-button" type="button">Add to bag</button></div><div class="product-service-notes"><p><b>Delivery</b><span>Available across Bangladesh</span></p><p><b>Need guidance?</b><span>Ask us if this feels right for your child's current stage.</span></p></div></div></section>
+  <section class="product-detail-hero"><div class="product-gallery"><figure class="product-gallery-main"><img src="/hero-zuvee-duvee.webp" alt="${escapeHtml(product.name)} in a calm play setting"></figure><figure><img src="/story-zuvee-duvee.webp" alt="Small hands exploring a toy"></figure><figure><img src="/age-zuvee-duvee.webp" alt="Thoughtfully selected play objects" style="object-position:${product.position}"></figure></div><div class="product-summary"><p class="eyebrow">HANDS-ON DISCOVERY · ${product.age}</p><h1>${escapeHtml(product.name)}</h1><p class="product-price">${product.price}</p><p class="product-intro">${escapeHtml(product.intro)}</p><div class="product-tags">${product.tags.map((tag) => `<span>${tag}</span>`).join("")}</div><div class="purchase-panel"><div class="quantity-control" data-product-quantity><button type="button" data-decrease>-</button><output>1</output><button type="button" data-increase>+</button></div><button class="product-add-button" type="button" data-add-cart data-detail-add data-slug="${product.slug}" data-name="${escapeHtml(product.name)}" data-price="${product.price}" data-price-value="${product.price.replace(/[^\d]/g, "")}">Add to bag</button></div><p class="purchase-note" data-purchase-note hidden>Added to your bag. Open the bag to complete checkout.</p><div class="product-service-notes"><p><b>Delivery</b><span>Available across Bangladesh</span></p><p><b>Need guidance?</b><span>Ask us if this feels right for your child's current stage.</span></p></div></div></section>
   <section class="product-editorial"><div><p class="eyebrow">WHY WE SELECTED IT</p><h2>A considered choice for growing little ones.</h2></div><div><p>${escapeHtml(product.description)}</p><p>It does not promise a developmental outcome. It simply offers age-considered opportunities to practise useful play actions at a child's own pace.</p></div></section>
   <section class="product-benefits"><div class="benefit-image"><img src="/story-zuvee-duvee.webp" alt="Child exploring activity components"></div><div><p class="eyebrow">DEVELOPMENTAL VALUE</p><h2>What they can explore</h2><ol>${product.benefits.map(([title, copy], i) => `<li><span>${String(i + 1).padStart(2, "0")}</span><div><h3>${title}</h3><p>${copy}</p></div></li>`).join("")}</ol></div></section>
   <section class="product-information"><div><p class="eyebrow">GOOD TO KNOW</p><h2>Clear details for parents.</h2><p>We keep product information direct so you can decide whether it fits your child and your home.</p></div><div class="product-accordions"><details class="product-specs-panel" open><summary>Product specs & details</summary><div class="product-specs-content"><dl class="product-specs-list">${product.specs.map(([label, value]) => `<div><dt>${label}</dt><dd>${value}</dd></div>`).join("")}</dl><div class="product-detail-notes"><article><h3>Age guidance</h3><p>Every child develops at a different pace, so observe their current interests and abilities.</p></article><article><h3>Delivery in Bangladesh</h3><p>Delivery is available across Bangladesh. Exact charges and estimated timing are confirmed during order processing.</p></article></div></div></details></div></section>
@@ -184,8 +185,85 @@ async function main() {
   }
 
   await writeFile(path.join(outDir, "_redirects"), products.map((product) => `/products/${product.slug} /products/${product.slug}/ 301`).join("\n"));
+  await writeFile(path.join(outDir, "commerce.js"), commerceScript());
   await writeFile(path.join(outDir, "robots.txt"), `User-agent: *\nAllow: /\nSitemap: ${baseUrl}/sitemap.xml\n`);
   await writeFile(path.join(outDir, "sitemap.xml"), `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>${baseUrl}/</loc></url>${products.map((product) => `<url><loc>${baseUrl}/products/${product.slug}/</loc></url>`).join("")}</urlset>`);
+}
+
+function commerceScript() {
+  return `(() => {
+  const cartKey = "zuvee-duvee-cart";
+  const accountKey = "zuvee-duvee-account";
+  const read = (key, fallback) => { try { return JSON.parse(localStorage.getItem(key)) || fallback; } catch { return fallback; } };
+  let cart = read(cartKey, []);
+  let account = read(accountKey, null);
+  let step = "cart";
+  let panel = null;
+  let checkout = { name: "", email: "", phone: "", address: "", city: "Dhaka", payment: "Cash on delivery", note: "" };
+  const money = (value) => "৳ " + Number(value || 0).toLocaleString("en-US");
+  const total = () => cart.reduce((sum, item) => sum + Number(item.priceValue) * item.quantity, 0);
+  const delivery = () => cart.length ? 120 : 0;
+  const save = () => { localStorage.setItem(cartKey, JSON.stringify(cart)); document.querySelectorAll("[data-cart-count]").forEach((node) => node.textContent = "(" + cart.reduce((sum, item) => sum + item.quantity, 0) + ")"); };
+  const add = (item) => { const existing = cart.find((entry) => entry.slug === item.slug); if (existing) existing.quantity += item.quantity; else cart.push(item); save(); openPanel("cart"); };
+  const updateQty = (slug, quantity) => { cart = cart.flatMap((item) => item.slug === slug ? (quantity < 1 ? [] : [{ ...item, quantity }]) : [item]); save(); render(); };
+  const openPanel = (next) => { panel = next; step = next === "cart" ? "cart" : step; render(); };
+  const close = () => { panel = null; render(); };
+  function render() {
+    document.querySelector(".commerce-overlay")?.remove();
+    if (!panel) return;
+    const overlay = document.createElement("div");
+    overlay.className = "commerce-overlay";
+    overlay.innerHTML = '<button class="commerce-backdrop" type="button" aria-label="Close panel"></button><aside class="commerce-panel"></aside>';
+    overlay.querySelector(".commerce-backdrop").addEventListener("click", close);
+    document.body.appendChild(overlay);
+    const aside = overlay.querySelector(".commerce-panel");
+    aside.innerHTML = '<div class="commerce-panel-header"><div><p class="eyebrow">' + (panel === "cart" ? "YOUR BAG" : "ACCOUNT") + '</p><h2>' + (panel === "cart" ? "Complete your order" : account ? "Your account" : "Sign in or create account") + '</h2></div><button type="button" data-close>Close</button></div>' + (panel === "cart" ? cartHtml() : accountHtml());
+    aside.querySelector("[data-close]")?.addEventListener("click", close);
+    bindPanel(aside);
+  }
+  function accountHtml() {
+    if (account) return '<div class="account-card"><h3>Welcome, ' + account.name + '</h3><p>' + account.email + '</p><div class="commerce-actions"><button type="button" data-view-bag>View bag</button><button type="button" class="secondary" data-logout>Log out</button></div></div>';
+    return '<div class="account-flow"><div class="commerce-tabs"><button class="active" type="button" data-mode="login">Log in</button><button type="button" data-mode="signup">Sign up</button></div><form class="commerce-form" data-account-form><label data-name-field hidden>Full name<input name="name" placeholder="Your name"></label><label>Email address<input name="email" type="email" required placeholder="you@example.com"></label><label>Password<input name="password" type="password" required minLength="6" placeholder="Minimum 6 characters"></label><button type="submit">Log in</button><p>This demo stores your session on this device only.</p></form></div>';
+  }
+  function cartHtml() {
+    const steps = ["cart", "details", "payment", "review"].map((name, index) => '<span class="' + (step === name ? "active" : "") + '">' + (index + 1) + '</span>').join("");
+    if (step === "cart") return '<div class="checkout-flow"><div class="checkout-steps">' + steps + '</div>' + (cart.length ? '<div class="cart-items">' + cart.map((item) => '<article><div><h3>' + item.name + '</h3><p>' + item.price + '</p></div><div class="cart-quantity"><button type="button" data-qty="' + item.slug + '" data-dir="-">-</button><output>' + item.quantity + '</output><button type="button" data-qty="' + item.slug + '" data-dir="+">+</button></div></article>').join("") + '</div>' + summaryHtml() + '<button class="checkout-primary" type="button" data-next="details">Continue to checkout</button>' : '<p class="empty-state">Your bag is empty. Add a product to begin checkout.</p>') + '</div>';
+    if (step === "details") return '<div class="checkout-flow"><div class="checkout-steps">' + steps + '</div><form class="commerce-form" data-details-form><label>Full name<input name="name" required value="' + (checkout.name || account?.name || "") + '"></label><label>Email<input name="email" type="email" required value="' + (checkout.email || account?.email || "") + '"></label><label>Phone<input name="phone" required value="' + checkout.phone + '" placeholder="+880..."></label><label>Delivery address<textarea name="address" required>' + checkout.address + '</textarea></label><label>City<input name="city" required value="' + checkout.city + '"></label><button type="submit">Continue to payment</button></form></div>';
+    if (step === "payment") return '<div class="checkout-flow"><div class="checkout-steps">' + steps + '</div><div class="commerce-form">' + ["Cash on delivery", "bKash payment", "Card payment"].map((method) => '<label class="radio-row"><input type="radio" name="payment" value="' + method + '"' + (checkout.payment === method ? " checked" : "") + '>' + method + '</label>').join("") + '<label>Order note<textarea name="note" placeholder="Optional delivery note">' + checkout.note + '</textarea></label><button type="button" data-next="review">Review order</button></div></div>';
+    if (step === "review") return '<div class="checkout-flow"><div class="checkout-steps">' + steps + '</div><div class="review-order">' + summaryHtml() + '<button class="checkout-primary" type="button" data-place-order>Place order</button><button type="button" class="link-button" data-next="details">Edit details</button></div></div>';
+    return '<div class="order-success"><h3>Order received</h3><p>Your order number is <b>ZD-' + Date.now().toString().slice(-6) + '</b>. We will contact you to confirm delivery and payment details.</p><button type="button" data-close>Done</button></div>';
+  }
+  function summaryHtml() { return '<div class="order-summary"><p><span>Subtotal</span><b>' + money(total()) + '</b></p><p><span>Estimated delivery</span><b>' + money(delivery()) + '</b></p><p><span>Total</span><b>' + money(total() + delivery()) + '</b></p></div>'; }
+  function bindPanel(root) {
+    root.querySelectorAll("[data-qty]").forEach((button) => button.addEventListener("click", () => { const item = cart.find((entry) => entry.slug === button.dataset.qty); if (item) updateQty(item.slug, item.quantity + (button.dataset.dir === "+" ? 1 : -1)); }));
+    root.querySelector("[data-view-bag]")?.addEventListener("click", () => openPanel("cart"));
+    root.querySelector("[data-logout]")?.addEventListener("click", () => { account = null; localStorage.removeItem(accountKey); render(); });
+    root.querySelector("[data-account-form]")?.addEventListener("submit", (event) => { event.preventDefault(); const data = new FormData(event.currentTarget); account = { name: data.get("name") || "Zuvee Duvee Customer", email: data.get("email") }; localStorage.setItem(accountKey, JSON.stringify(account)); checkout.name ||= account.name; checkout.email ||= account.email; render(); });
+    root.querySelectorAll("[data-mode]").forEach((button) => button.addEventListener("click", () => { root.querySelectorAll("[data-mode]").forEach((node) => node.classList.remove("active")); button.classList.add("active"); const signup = button.dataset.mode === "signup"; root.querySelector("[data-name-field]").hidden = !signup; root.querySelector("[data-account-form] button").textContent = signup ? "Create account" : "Log in"; }));
+    root.querySelector("[data-details-form]")?.addEventListener("submit", (event) => { event.preventDefault(); const data = new FormData(event.currentTarget); checkout = { ...checkout, name: data.get("name"), email: data.get("email"), phone: data.get("phone"), address: data.get("address"), city: data.get("city") }; step = "payment"; render(); });
+    root.querySelectorAll("[name=payment]").forEach((input) => input.addEventListener("change", () => checkout.payment = input.value));
+    root.querySelector("[name=note]")?.addEventListener("input", (event) => checkout.note = event.target.value);
+    root.querySelectorAll("[data-next]").forEach((button) => button.addEventListener("click", () => { step = button.dataset.next; render(); }));
+    root.querySelector("[data-place-order]")?.addEventListener("click", () => { cart = []; save(); step = "success"; render(); });
+    root.querySelectorAll("[data-close]").forEach((button) => button.addEventListener("click", close));
+  }
+  document.addEventListener("click", (event) => {
+    const addButton = event.target.closest("[data-add-cart]");
+    if (addButton) {
+      event.preventDefault();
+      const output = addButton.closest(".purchase-panel")?.querySelector("output");
+      const quantity = output ? Number(output.textContent || 1) : 1;
+      add({ slug: addButton.dataset.slug, name: addButton.dataset.name, price: addButton.dataset.price, priceValue: addButton.dataset.priceValue, quantity });
+      const note = document.querySelector("[data-purchase-note]");
+      if (note) note.hidden = false;
+    }
+    if (event.target.closest("[data-open-cart]")) { event.preventDefault(); openPanel("cart"); }
+    if (event.target.closest("[data-open-account]")) { event.preventDefault(); openPanel("account"); }
+    if (event.target.closest("[data-increase]")) { const output = event.target.closest("[data-product-quantity]").querySelector("output"); output.textContent = Number(output.textContent) + 1; }
+    if (event.target.closest("[data-decrease]")) { const output = event.target.closest("[data-product-quantity]").querySelector("output"); output.textContent = Math.max(1, Number(output.textContent) - 1); }
+  });
+  save();
+})();`;
 }
 
 main().catch((error) => {
