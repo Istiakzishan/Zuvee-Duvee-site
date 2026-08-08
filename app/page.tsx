@@ -13,9 +13,9 @@ type Product = {
 
 const products: Product[] = [
   { name: "Little Hands Activity Cube", age: "12m+", price: "৳ 2,450", tags: ["Fine motor", "Problem solving"], position: "13% center", href: "/products/little-hands-activity-cube" },
-  { name: "Soft Discovery Set", age: "4m+", price: "৳ 1,280", tags: ["Sensory", "Grasping"], position: "50% center" },
-  { name: "Woodland Shape Puzzle", age: "3y+", price: "৳ 1,850", tags: ["Logic", "Hand-eye"], position: "86% center" },
-  { name: "Press & Turn Board", age: "18m+", price: "৳ 2,150", tags: ["Focus", "Fine motor"], position: "38% center" },
+  { name: "Soft Discovery Set", age: "4m+", price: "৳ 1,280", tags: ["Sensory", "Grasping"], position: "50% center", href: "/products/soft-discovery-set" },
+  { name: "Woodland Shape Puzzle", age: "3y+", price: "৳ 1,850", tags: ["Logic", "Hand-eye"], position: "86% center", href: "/products/woodland-shape-puzzle" },
+  { name: "Press & Turn Board", age: "18m+", price: "৳ 2,150", tags: ["Focus", "Fine motor"], position: "38% center", href: "/products/press-and-turn-board" },
 ];
 
 const development = [

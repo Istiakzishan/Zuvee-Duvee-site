@@ -16,7 +16,6 @@ export const metadata: Metadata = {
     locale: "en_BD",
     type: "website",
   },
-  other: { "codex-preview": "development" },
   icons: { icon: "/favicon.svg", shortcut: "/favicon.svg" },
 };
 

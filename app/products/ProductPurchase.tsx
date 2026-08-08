@@ -9,7 +9,7 @@ export default function ProductPurchase() {
   return (
     <div className="purchase-panel">
       <div className="quantity-control" aria-label="Quantity selector">
-        <button type="button" onClick={() => setQuantity(Math.max(1, quantity - 1))} aria-label="Decrease quantity">−</button>
+        <button type="button" onClick={() => setQuantity(Math.max(1, quantity - 1))} aria-label="Decrease quantity">-</button>
         <output aria-live="polite">{quantity}</output>
         <button type="button" onClick={() => setQuantity(quantity + 1)} aria-label="Increase quantity">+</button>
       </div>
