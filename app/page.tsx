@@ -8,10 +8,11 @@ type Product = {
   price: string;
   tags: string[];
   position: string;
+  href?: string;
 };
 
 const products: Product[] = [
-  { name: "Little Hands Activity Cube", age: "12m+", price: "৳ 2,450", tags: ["Fine motor", "Problem solving"], position: "13% center" },
+  { name: "Little Hands Activity Cube", age: "12m+", price: "৳ 2,450", tags: ["Fine motor", "Problem solving"], position: "13% center", href: "/products/little-hands-activity-cube" },
   { name: "Soft Discovery Set", age: "4m+", price: "৳ 1,280", tags: ["Sensory", "Grasping"], position: "50% center" },
   { name: "Woodland Shape Puzzle", age: "3y+", price: "৳ 1,850", tags: ["Logic", "Hand-eye"], position: "86% center" },
   { name: "Press & Turn Board", age: "18m+", price: "৳ 2,150", tags: ["Focus", "Fine motor"], position: "38% center" },
@@ -36,6 +37,7 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
   return (
     <article className="product-card">
       <div className="product-image" style={{ backgroundPosition: product.position }}>
+        {product.href && <a className="product-image-link" href={product.href} aria-label={`View details for ${product.name}`} />}
         <span className="age-pill">{product.age}</span>
         <button className={`heart ${liked ? "active" : ""}`} onClick={() => setLiked(!liked)} aria-label={`${liked ? "Remove" : "Add"} ${product.name} ${liked ? "from" : "to"} wishlist`}>
           {liked ? "♥" : "♡"}
@@ -46,8 +48,9 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
       </div>
       <div className="product-info">
         <div className="tags">{product.tags.map((tag) => <span key={tag}>{tag}</span>)}</div>
-        <h3>{product.name}</h3>
+        <h3>{product.href ? <a href={product.href}>{product.name}</a> : product.name}</h3>
         <p>{product.price}</p>
+        {product.href && <a className="product-details-link" href={product.href}>View product details →</a>}
       </div>
     </article>
   );

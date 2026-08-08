@@ -6,8 +6,16 @@ const display = Cormorant_Garamond({ variable: "--font-display", subsets: ["lati
 const sans = DM_Sans({ variable: "--font-sans", subsets: ["latin"], weight: ["400", "500", "600"] });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://zuvee-duvee.istiakzishan.chatgpt.site"),
   title: "Zuvee Duvee",
   description: "Thoughtfully selected play and essentials for growing little ones in Bangladesh.",
+  openGraph: {
+    title: "Zuvee Duvee",
+    description: "Thoughtfully selected play and essentials for growing little ones in Bangladesh.",
+    siteName: "Zuvee Duvee",
+    locale: "en_BD",
+    type: "website",
+  },
   other: { "codex-preview": "development" },
   icons: { icon: "/favicon.svg", shortcut: "/favicon.svg" },
 };
