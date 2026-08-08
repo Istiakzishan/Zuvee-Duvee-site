@@ -70,7 +70,7 @@ h1 { font-size:clamp(54px,5.3vw,82px); line-height:.93; max-width:620px; margin-
 .tags { display:flex; gap:8px; color:#6d776f; font-size:9px; letter-spacing:.1em; text-transform:uppercase; }
 .tags span+span:before { content:"·"; margin-right:8px; }
 .product-info h3 { font-family:var(--display); font-weight:500; font-size:22px; margin:9px 0 7px; }
-.product-info>p { font-size:13px; margin:0; }
+.product-info>p { font-size:16px; font-weight:600; margin:0; color:var(--green); }
 .product-details-link { display:inline-block; margin-top:13px; padding-bottom:3px; border-bottom:1px solid var(--line); font-size:10px; letter-spacing:.06em; text-transform:uppercase; }
 .development-section { background:var(--green); color:#f6f2e8; padding:clamp(90px,9vw,140px) clamp(22px,7vw,112px); display:grid; grid-template-columns:.8fr 1.2fr; gap:9vw; }
 .section-heading.light { position:sticky; top:140px; align-self:start; }
@@ -81,6 +81,13 @@ h1 { font-size:clamp(54px,5.3vw,82px); line-height:.93; max-width:620px; margin-
 .development-card h3 { font-family:var(--display); font-size:28px; font-weight:500; margin-bottom:8px; }
 .development-card p { color:#acb8af; font-size:12px; margin:0; line-height:1.6; }
 .development-card b { font-weight:400; color:#c97b5a; }
+.skill-photo-section { background:#eef0e9; }
+.skill-photo-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
+.skill-photo-card { min-width:0; }
+.skill-photo { aspect-ratio:1.05; background-image:url('/skill-play-grid.webp'); background-size:300% 200%; background-repeat:no-repeat; margin-bottom:18px; }
+.skill-photo-card>span { display:block; color:var(--terra); font-size:10px; letter-spacing:.14em; margin-bottom:14px; }
+.skill-photo-card h3 { font-family:var(--display); font-weight:500; font-size:29px; line-height:1.05; margin-bottom:10px; }
+.skill-photo-card p { color:#68746c; font-size:12px; line-height:1.65; max-width:360px; margin:0; }
 .philosophy { background:var(--cream); text-align:center; padding:clamp(100px,12vw,190px) 24px; }
 .philosophy h2 { margin:0; }
 .philosophy h2.accent { color:var(--terra); font-style:italic; }
@@ -221,6 +228,7 @@ footer .logo { color:white; }
   .quick-add { transform:none; }
   .development-section,.process-section { grid-template-columns:1fr; gap:25px; }
   .section-heading.light { position:static; }
+  .skill-photo-grid { grid-template-columns:repeat(2,1fr); }
   .story-section { grid-template-columns:1fr; }
   .story-image { min-height:480px; }
   .newly-section .product-scroll { display:flex; }
@@ -260,6 +268,7 @@ footer .logo { color:white; }
   .product-card { flex-basis:82vw; }
   .development-section { padding:80px 20px; }
   .development-card { grid-template-columns:30px 1fr auto; }
+  .skill-photo-grid { grid-template-columns:1fr; gap:38px; }
   .philosophy { text-align:left; padding:95px 20px; }
   .philosophy>p:not(.eyebrow) { margin-left:0; }
   .story-image { min-height:360px; }

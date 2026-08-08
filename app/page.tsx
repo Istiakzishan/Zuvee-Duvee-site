@@ -27,6 +27,15 @@ const development = [
   ["Focus & Attention", "Calm play experiences worth staying with a little longer."],
 ];
 
+const skillPhotos = [
+  ["Fine Motor Skills", "Little hands turning and grasping a wooden activity toy.", "0% 0%"],
+  ["Problem Solving", "A toddler testing shapes and trying another way.", "50% 0%"],
+  ["Sensory Discovery", "A baby exploring soft textures, shape and movement.", "100% 0%"],
+  ["Hand-Eye Coordination", "A child placing rings while looking and moving together.", "0% 100%"],
+  ["Creativity", "A toddler arranging blocks and building new ideas.", "50% 100%"],
+  ["Focus & Attention", "Calm, focused play with a press-and-turn board.", "100% 100%"],
+];
+
 function ArrowIcon() {
   return <span aria-hidden="true">↗</span>;
 }
@@ -101,6 +110,20 @@ export default function Home() {
       <section className="development-section" id="development">
         <div className="section-heading light"><p className="eyebrow">FOLLOW THEIR CURIOSITY</p><h2>What are they discovering today?</h2><p>Find play experiences that support the skills they&apos;re beginning to explore.</p></div>
         <div className="development-grid">{development.map(([title, copy], i) => <a href="#products" key={title} className="development-card"><span>0{i + 1}</span><div><h3>{title}</h3><p>{copy}</p></div><b>↗</b></a>)}</div>
+      </section>
+
+      <section className="section skill-photo-section">
+        <div className="section-heading split"><div><p className="eyebrow">PLAY THAT SUPPORTS GROWTH</p><h2>Six ways little ones learn through play</h2><p>Happy, everyday play moments connected to the developmental skills families often look for.</p></div><a className="text-link" href="#products">Shop supportive play <ArrowIcon /></a></div>
+        <div className="skill-photo-grid">
+          {skillPhotos.map(([title, copy, position], i) => (
+            <article className="skill-photo-card" key={title}>
+              <div className="skill-photo" style={{ backgroundPosition: position }} role="img" aria-label={copy} />
+              <span>{String(i + 1).padStart(2, "0")}</span>
+              <h3>{title}</h3>
+              <p>{copy}</p>
+            </article>
+          ))}
+        </div>
       </section>
 
       <section className="philosophy" id="philosophy">
