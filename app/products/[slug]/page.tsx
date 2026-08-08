@@ -111,7 +111,19 @@ export default async function ProductPage({ params }: PageProps) {
 
       <section className="product-information">
         <div><p className="eyebrow">GOOD TO KNOW</p><h2>Clear details for parents.</h2><p>We keep product information direct so you can decide whether it fits your child and your home.</p></div>
-        <div className="product-accordions">{product.details.map((detail, index) => <details key={detail.title} open={index === 0}><summary>{detail.title}</summary><p>{detail.copy}</p></details>)}</div>
+        <div className="product-accordions">
+          <details className="product-specs-panel" open>
+            <summary>Product specs & details</summary>
+            <div className="product-specs-content">
+              <dl className="product-specs-list">
+                {product.specs.map((spec) => <div key={spec.label}><dt>{spec.label}</dt><dd>{spec.value}</dd></div>)}
+              </dl>
+              <div className="product-detail-notes">
+                {product.details.map((detail) => <article key={detail.title}><h3>{detail.title}</h3><p>{detail.copy}</p></article>)}
+              </div>
+            </div>
+          </details>
+        </div>
       </section>
 
       <section className="product-seo-copy">

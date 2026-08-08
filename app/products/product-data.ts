@@ -10,6 +10,7 @@ export type ProductDetail = {
   description: string;
   selectedReason: [string, string];
   benefits: { title: string; copy: string }[];
+  specs: { label: string; value: string }[];
   details: { title: string; copy: string }[];
   seoTitle: string;
   seoCopy: string;
@@ -32,6 +33,12 @@ export const products: ProductDetail[] = [
       { title: "Controlled hand movements", copy: "Turning, pressing and grasping can give small hands opportunities to practise movement with intention." },
       { title: "Cause and effect", copy: "Children can notice how an action creates a visible or physical response." },
       { title: "Trying another way", copy: "Different activities encourage curiosity, repetition and early problem-solving habits." },
+    ],
+    specs: [
+      { label: "Recommended age", value: "12 months and older" },
+      { label: "Play focus", value: "Fine motor skills, cause and effect, early problem solving" },
+      { label: "Best for", value: "Short independent play with nearby adult guidance" },
+      { label: "Availability", value: "Delivery across Bangladesh" },
     ],
     details: [
       { title: "Age guidance", copy: "Considered for children from approximately 12 months. Every child develops at a different pace, so observe their current interests and abilities." },
@@ -63,6 +70,12 @@ export const products: ProductDetail[] = [
       { title: "Sensory discovery", copy: "Gentle textures and shapes create small moments of noticing without overstimulation." },
       { title: "Shared floor play", copy: "The set fits short parent-guided play moments during tummy time or calm awake periods." },
     ],
+    specs: [
+      { label: "Recommended age", value: "4 months and older" },
+      { label: "Play focus", value: "Sensory discovery, reaching, grasping" },
+      { label: "Best for", value: "Calm awake time and parent-guided floor play" },
+      { label: "Availability", value: "Delivery across Bangladesh" },
+    ],
     details: [
       { title: "Age guidance", copy: "Considered for babies from approximately 4 months, when they are beginning to reach and grasp." },
       { title: "Play ideas", copy: "Place one piece within reach and let your baby notice it before offering another." },
@@ -93,6 +106,12 @@ export const products: ProductDetail[] = [
       { title: "Hand-eye coordination", copy: "Lifting and placing pieces connects what children see with how their hands move." },
       { title: "Persistence", copy: "A familiar puzzle supports trying again without needing a noisy reward." },
     ],
+    specs: [
+      { label: "Recommended age", value: "3 years and older" },
+      { label: "Play focus", value: "Matching, logic, hand-eye coordination" },
+      { label: "Best for", value: "Quiet tabletop play and guided puzzle time" },
+      { label: "Availability", value: "Delivery across Bangladesh" },
+    ],
     details: [
       { title: "Age guidance", copy: "Considered for children from approximately 3 years, with adult support when needed." },
       { title: "Play ideas", copy: "Start by removing two or three pieces, then add more as your child gains confidence." },
@@ -122,6 +141,12 @@ export const products: ProductDetail[] = [
       { title: "Finger strength", copy: "Pressing and turning can support small muscle control through everyday play." },
       { title: "Focus and attention", copy: "Contained activities encourage a child to stay with one task a little longer." },
       { title: "Cause and effect", copy: "Simple responses help toddlers connect an action with what changes next." },
+    ],
+    specs: [
+      { label: "Recommended age", value: "18 months and older" },
+      { label: "Play focus", value: "Fine motor control, focus, cause and effect" },
+      { label: "Best for", value: "Toddlers who enjoy pressing, turning and repeating actions" },
+      { label: "Availability", value: "Delivery across Bangladesh" },
     ],
     details: [
       { title: "Age guidance", copy: "Considered for children from approximately 18 months who are interested in buttons, knobs and repeated actions." },
