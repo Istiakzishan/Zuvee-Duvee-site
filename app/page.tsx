@@ -43,7 +43,7 @@ function ProductCard({ product }: { product: Product }) {
   const purchasable = product.purchasable !== false && Number(product.priceValue) > 0;
   return (
     <article className="product-card">
-      <div className="product-image" style={{ backgroundPosition: product.position }}>
+      <div className="product-image" style={{ backgroundImage: `url('${product.gallery[0].src}')`, backgroundPosition: product.gallery[0].position || product.position }}>
         <a className="product-image-link" href={href} aria-label={`View details for ${product.name}`} />
         <span className="age-pill"><LangText en={product.age} bn={product.ageBn} /></span>
         <button className={`heart ${liked ? "active" : ""}`} onClick={() => setLiked(!liked)} aria-label={`${liked ? "Remove" : "Add"} ${product.name} ${liked ? "from" : "to"} wishlist`}>

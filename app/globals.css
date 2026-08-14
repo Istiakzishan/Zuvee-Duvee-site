@@ -68,7 +68,7 @@ h1 { font-size:clamp(54px,5.3vw,82px); line-height:.93; max-width:620px; margin-
 .product-scroll { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:18px; }
 .mobile-rail-dots { display:none; }
 .product-card { min-width:0; }
-.product-image { display:block; position:relative; aspect-ratio:.86; background-image:url('/age-zuvee-duvee.webp'); background-size:310% auto; background-repeat:no-repeat; overflow:hidden; }
+.product-image { display:block; position:relative; aspect-ratio:.86; background-image:url('/age-zuvee-duvee.webp'); background-size:cover; background-position:center; background-repeat:no-repeat; overflow:hidden; }
 .product-image-link { position:absolute; inset:0; z-index:1; }
 .age-pill { position:absolute; top:15px; left:15px; min-height:32px; display:inline-flex; align-items:center; justify-content:center; padding:0 12px; background:rgba(251,248,241,.9); font-size:11px; line-height:1; letter-spacing:.08em; }
 .age-pill,.heart,.quick-add { z-index:2; }

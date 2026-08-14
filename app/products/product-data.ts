@@ -28,8 +28,8 @@ export type ProductDetail = {
   gallery: { src: string; alt: string; altBn: string; position?: string }[];
 };
 
-const commonGallery = (position: string, name: string, nameBn: string): ProductDetail["gallery"] => [
-  { src: "/age-zuvee-duvee.webp", alt: `${name} arranged for calm developmental play`, altBn: `${nameBn} শান্ত বিকাশভিত্তিক খেলার জন্য সাজানো`, position },
+const commonGallery = (mainSrc: string, position: string, name: string, nameBn: string): ProductDetail["gallery"] => [
+  { src: mainSrc, alt: `${name} product photo`, altBn: `${nameBn} পণ্যের ছবি`, position },
   { src: "/story-zuvee-duvee.webp", alt: "Small hands exploring activity components", altBn: "ছোট হাত অ্যাক্টিভিটি অংশ অন্বেষণ করছে" },
   { src: "/hero-zuvee-duvee.webp", alt: "Parent and child sharing a calm play moment", altBn: "অভিভাবক ও শিশু শান্ত খেলার মুহূর্ত ভাগ করছে", position: "50% center" },
 ];
@@ -74,7 +74,7 @@ export const products: ProductDetail[] = [
     seoTitleBn: "কৌতূহলী হাতের জন্য কমপ্যাক্ট সহায়ক খেলা।",
     seoCopy: "For parents comparing activity toys in Bangladesh, this busy cube keeps the focus on hands-on actions children can repeat and understand.",
     seoCopyBn: "বাংলাদেশে অ্যাক্টিভিটি টয় খুঁজছেন এমন অভিভাবকদের জন্য এই বিজি কিউব হাতে-কলমে করা যায় এমন পুনরাবৃত্তিমূলক কাজকে গুরুত্ব দেয়।",
-    gallery: commonGallery("13% center", "10-in-1 Montessori Busy Cube", "১০-ইন-১ মন্টেসরি বিজি কিউব"),
+    gallery: commonGallery("/product-busy-cube.webp", "center", "10-in-1 Montessori Busy Cube", "১০-ইন-১ মন্টেসরি বিজি কিউব"),
   },
   {
     slug: "magnetic-fishing-shape-puzzle",
@@ -115,7 +115,7 @@ export const products: ProductDetail[] = [
     seoTitleBn: "মজার ফিশিং চ্যালেঞ্জসহ শেপ মেলানোর খেলা।",
     seoCopy: "This 2-in-1 set gives toddlers and preschoolers a simple way to practise matching, sorting and hand-eye coordination through hands-on play.",
     seoCopyBn: "এই ২-ইন-১ সেট টডলার ও প্রিস্কুল শিশুদের হাতে-কলমে খেলার মাধ্যমে মেলানো, সাজানো ও হাত-চোখের সমন্বয় অনুশীলনের সহজ সুযোগ দেয়।",
-    gallery: commonGallery("50% center", "Magnetic Fishing & Shape Puzzle", "ম্যাগনেটিক ফিশিং ও শেপ পাজল"),
+    gallery: commonGallery("/product-fishing-shape-puzzle.webp", "center", "Magnetic Fishing & Shape Puzzle", "ম্যাগনেটিক ফিশিং ও শেপ পাজল"),
   },
   {
     slug: "wooden-shape-matching-board",
@@ -156,7 +156,7 @@ export const products: ProductDetail[] = [
     seoTitleBn: "মনোযোগী শেপ শেখার জন্য সহজ বোর্ড।",
     seoCopy: "Shape matching supports calm, repeatable problem solving when children can see the task clearly and try again at their own pace.",
     seoCopyBn: "শিশু যখন কাজটি স্পষ্টভাবে দেখতে পায় এবং নিজের গতিতে আবার চেষ্টা করতে পারে, তখন শেপ মেলানো শান্ত ও পুনরাবৃত্তিমূলক সমস্যা সমাধানে সহায়তা করে।",
-    gallery: commonGallery("86% center", "Wooden Shape Matching Board", "কাঠের শেপ ম্যাচিং বোর্ড"),
+    gallery: commonGallery("/product-shape-matching-board.jpg", "center", "Wooden Shape Matching Board", "কাঠের শেপ ম্যাচিং বোর্ড"),
   },
   {
     slug: "magnetic-tangram-puzzle-book",
@@ -197,7 +197,7 @@ export const products: ProductDetail[] = [
     seoTitleBn: "যুক্তি ও কল্পনার জন্য বহনযোগ্য ট্যানগ্রাম খেলা।",
     seoCopy: "Magnetic tangram play gives preschoolers a practical way to explore geometry, patterns and creative problem solving at home or while travelling.",
     seoCopyBn: "ম্যাগনেটিক ট্যানগ্রাম খেলা প্রিস্কুল শিশুদের বাসায় বা ভ্রমণে জ্যামিতি, প্যাটার্ন ও সৃজনশীল সমস্যা সমাধান অন্বেষণের বাস্তব সুযোগ দেয়।",
-    gallery: commonGallery("38% center", "Magnetic Tangram Puzzle Book", "ম্যাগনেটিক ট্যানগ্রাম পাজল বুক"),
+    gallery: commonGallery("/product-tangram-puzzle-book.webp", "center", "Magnetic Tangram Puzzle Book", "ম্যাগনেটিক ট্যানগ্রাম পাজল বুক"),
   },
   {
     slug: "wooden-geoboard-set",
@@ -238,7 +238,7 @@ export const products: ProductDetail[] = [
     seoTitleBn: "মনোযোগী সৃজনশীল খেলার জন্য বানানো যায় এমন জ্যামিতি।",
     seoCopy: "A geoboard helps children turn shape ideas into visible patterns while practising finger control, coordination and early math thinking.",
     seoCopyBn: "জিওবোর্ড শিশুকে আকারের ধারণাকে দৃশ্যমান প্যাটার্নে রূপ দিতে সহায়তা করে, পাশাপাশি আঙুলের নিয়ন্ত্রণ, সমন্বয় ও প্রাথমিক গণিতচিন্তার অনুশীলন করায়।",
-    gallery: commonGallery("68% center", "Wooden Geoboard Set", "কাঠের জিওবোর্ড সেট"),
+    gallery: commonGallery("/product-geoboard-set.jpg", "center", "Wooden Geoboard Set", "কাঠের জিওবোর্ড সেট"),
   },
 ];
 
