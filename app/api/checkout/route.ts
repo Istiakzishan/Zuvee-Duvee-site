@@ -5,6 +5,7 @@ export async function POST(request: Request) {
   if (!supabaseUrl || !publishableKey) return Response.json({ error: "Checkout is not configured." }, { status: 503 });
   const body = await request.text();
   if (body.length > 20_000) return Response.json({ error: "Request is too large." }, { status: 413 });
+  const customerAuthorization = request.headers.get("authorization");
 
   const upstream = await fetch(`${supabaseUrl}/functions/v1/storefront-checkout`, {
     method: "POST",
@@ -13,6 +14,7 @@ export async function POST(request: Request) {
       apikey: publishableKey,
       authorization: `Bearer ${publishableKey}`,
       origin: new URL(request.url).origin,
+      ...(customerAuthorization ? { "x-customer-authorization": customerAuthorization } : {}),
     },
     body,
   });

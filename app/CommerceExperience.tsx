@@ -90,6 +90,7 @@ export default function CommerceExperience({
   const [panel, setPanel] = useState<"cart" | "account" | null>(null);
   const [checkoutStep, setCheckoutStep] = useState<CheckoutStep>("cart");
   const [orderNumber, setOrderNumber] = useState("");
+  const [orderEmailStatus, setOrderEmailStatus] = useState("");
   const [toast, setToast] = useState("");
   const [orderError, setOrderError] = useState("");
   const [placingOrder, setPlacingOrder] = useState(false);
@@ -98,6 +99,7 @@ export default function CommerceExperience({
   const [authBusy, setAuthBusy] = useState(false);
   const [authMessage, setAuthMessage] = useState("");
   const [authError, setAuthError] = useState("");
+  const [showPasswordForm, setShowPasswordForm] = useState(false);
   const [authForm, setAuthForm] = useState({ fullName: "", email: "", password: "" });
   const [wishlistIds, setWishlistIds] = useState<Set<string>>(new Set());
   const [wishlistProducts, setWishlistProducts] = useState<WishlistProduct[]>([]);
@@ -152,9 +154,14 @@ export default function CommerceExperience({
 
   useEffect(() => {
     if (!supabase) return;
+    const accountWelcome = new URLSearchParams(window.location.search).get("account") === "welcome";
     void supabase.auth.getSession().then(({ data }) => {
       setSession(data.session);
       if (data.session) void loadWishlist(data.session.user.id);
+      if (accountWelcome) {
+        setPanel("account");
+        setShowPasswordForm(true);
+      }
     });
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, nextSession) => {
       setSession(nextSession);
@@ -172,7 +179,7 @@ export default function CommerceExperience({
       }
       if (event === "PASSWORD_RECOVERY") {
         setPanel("account");
-        setAuthMode("recover");
+        setShowPasswordForm(true);
       }
     });
     return () => subscription.unsubscribe();
@@ -356,6 +363,26 @@ export default function CommerceExperience({
     else { setAuthMessage("Signed out."); setAuthMode("sign-in"); }
   }
 
+  async function setAccountPassword(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!supabase || !session) return;
+    setAuthBusy(true);
+    setAuthError("");
+    setAuthMessage("");
+    const { error } = await supabase.auth.updateUser({ password: authForm.password });
+    setAuthBusy(false);
+    if (error) {
+      setAuthError(error.message);
+      return;
+    }
+    setShowPasswordForm(false);
+    setAuthForm((current) => ({ ...current, password: "" }));
+    setAuthMessage("Your password has been set.");
+    const url = new URL(window.location.href);
+    url.searchParams.delete("account");
+    window.history.replaceState({}, "", `${url.pathname}${url.search}${url.hash}`);
+  }
+
   function updateQuantity(slug: string, quantity: number) {
     setCart((current) => current.flatMap((item) => item.slug !== slug ? [item] : quantity < 1 ? [] : [{ ...item, quantity: Math.min(quantity, item.stock || 10) }]));
   }
@@ -370,7 +397,10 @@ export default function CommerceExperience({
       checkoutRequestIdRef.current ||= crypto.randomUUID();
       const response = await fetch("/api/checkout", {
         method: "POST",
-        headers: { "content-type": "application/json" },
+        headers: {
+          "content-type": "application/json",
+          ...(session?.access_token ? { authorization: `Bearer ${session.access_token}` } : {}),
+        },
         body: JSON.stringify({
           idempotency_key: checkoutRequestIdRef.current,
           payment_method: "cod",
@@ -379,9 +409,10 @@ export default function CommerceExperience({
           items: cart.map((item) => ({ variant_id: item.variantId, quantity: item.quantity })),
         }),
       });
-      const result = await response.json() as { order?: { order_number?: string }; error?: string };
+      const result = await response.json() as { order?: { order_number?: string }; email?: { status?: string }; error?: string };
       if (!response.ok || !result.order?.order_number) throw new Error(result.error || "Order could not be placed.");
       setOrderNumber(result.order.order_number);
+      setOrderEmailStatus(result.email?.status || "failed");
       setCheckoutStep("success");
       setCart([]);
       checkoutRequestIdRef.current = null;
@@ -411,7 +442,8 @@ export default function CommerceExperience({
 
           {panel === "account" && <div className="account-flow">
             {!supabase ? <p className="commerce-notice error" role="alert">Customer accounts are temporarily unavailable.</p> : session ? <>
-              <div className="account-summary"><div><span>Signed in as</span><strong>{String(session.user.user_metadata.full_name ?? session.user.email ?? "Customer")}</strong><small>{session.user.email}</small></div><button className="link-button" disabled={authBusy} onClick={() => void signOut()} type="button">Sign out</button></div>
+              <div className="account-summary"><div><span>Signed in as</span><strong>{String(session.user.user_metadata.full_name ?? session.user.email ?? "Customer")}</strong><small>{session.user.email}</small></div><div className="account-actions"><button className="link-button" disabled={authBusy} onClick={() => setShowPasswordForm((current) => !current)} type="button">Set password</button><button className="link-button" disabled={authBusy} onClick={() => void signOut()} type="button">Sign out</button></div></div>
+              {showPasswordForm && <form className="commerce-form account-form" onSubmit={setAccountPassword}><label>New password<input autoComplete="new-password" minLength={8} required type="password" value={authForm.password} onChange={(event) => setAuthForm({ ...authForm, password: event.target.value })} /><small>At least 8 characters.</small></label><button disabled={authBusy} type="submit">{authBusy ? "Please wait..." : "Set password"}</button></form>}
               <section className="wishlist-section" aria-labelledby="wishlist-heading"><div className="wishlist-heading"><div><p className="eyebrow">SAVED FOR LATER</p><h3 id="wishlist-heading">Your wishlist</h3></div><span>{wishlistIds.size}</span></div>
                 {wishlistLoading ? <p className="empty-state">Loading your saved products...</p> : wishlistProducts.length ? <div className="wishlist-list">{wishlistProducts.map((product) => <article key={product.productId}><a href={`/products/${product.slug}`}>{product.image ? <img src={product.image} alt="" /> : <span className="wishlist-image-placeholder" />}<div><h4>{product.name}</h4><p>{product.price}</p></div></a><button aria-label={`Remove ${product.name} from wishlist`} onClick={() => void toggleWishlist(product)} type="button">Remove</button></article>)}</div> : <div className="wishlist-empty"><span aria-hidden="true">♡</span><h4>Your wishlist is empty</h4><p>Tap the heart on a product to save it here.</p><a href="/shop">Explore products</a></div>}
               </section>
@@ -438,7 +470,7 @@ export default function CommerceExperience({
             {checkoutStep === "details" && <form className="commerce-form" onSubmit={submitDetails}><label>Full name<input required value={checkout.name} onChange={(event) => setCheckout({ ...checkout, name: event.target.value })} /></label><label>Email<input type="email" required value={checkout.email} onChange={(event) => setCheckout({ ...checkout, email: event.target.value })} /></label><label>Phone<input required value={checkout.phone} onChange={(event) => setCheckout({ ...checkout, phone: event.target.value })} placeholder="+880..." /></label><label>Delivery address<textarea required value={checkout.address} onChange={(event) => setCheckout({ ...checkout, address: event.target.value })} /></label><label>City<input required value={checkout.city} onChange={(event) => setCheckout({ ...checkout, city: event.target.value })} /></label><p className="checkout-helper">Your details are used only to confirm this order and arrange delivery.</p><button type="submit">Continue to payment</button></form>}
             {checkoutStep === "payment" && <div className="commerce-form"><label className="radio-row"><input type="radio" checked readOnly />Cash on delivery</label><p className="checkout-helper">Pay when your order is delivered. Online payment will appear here after a payment gateway is connected.</p><label>Order note<textarea value={checkout.note} onChange={(event) => setCheckout({ ...checkout, note: event.target.value })} placeholder="Optional delivery note" /></label><button type="button" onClick={() => setCheckoutStep("review")}>Review order</button></div>}
             {checkoutStep === "review" && <div className="review-order"><div className="order-summary"><p><span>Customer</span><b>{checkout.name}</b></p><p><span>Phone</span><b>{checkout.phone}</b></p><p><span>Payment</span><b>{checkout.payment}</b></p><p><span>Total</span><b>{formatPrice(payable)}</b></p></div>{orderError && <p className="checkout-helper" role="alert">{orderError}</p>}<button className="checkout-primary" type="button" disabled={placingOrder} onClick={() => void placeOrder()}>{placingOrder ? "Placing order..." : "Place order"}</button><button type="button" className="link-button" onClick={() => setCheckoutStep("details")}>Edit details</button></div>}
-            {checkoutStep === "success" && <div className="order-success"><h3>Order received</h3><p>Your order number is <b>{orderNumber}</b>. We will contact you to confirm delivery and payment details.</p><button type="button" onClick={closePanel}>Done</button></div>}
+            {checkoutStep === "success" && <div className="order-success"><h3>Order received</h3><p>Your order number is <b>{orderNumber}</b>. {orderEmailStatus === "sent" ? "A confirmation email has been sent. Guest customers can use the secure account link in that email." : "Your order is saved, but the confirmation email could not be sent. We will contact you to confirm delivery."}</p><button type="button" onClick={closePanel}>Done</button></div>}
           </div>}
         </aside>
       </div>}
