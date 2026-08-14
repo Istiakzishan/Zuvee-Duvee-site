@@ -2,6 +2,7 @@
 
 import type { ReactNode } from "react";
 import { useState } from "react";
+import Link from "next/link";
 import CommerceExperience, { openAccount, openCart } from "./CommerceExperience";
 import LanguageSwitcher from "./LanguageSwitcher";
 import ProductCard from "./products/ProductCard";
@@ -56,7 +57,7 @@ export default function Home() {
         <button className="mobile-icon" onClick={() => setMenuOpen(!menuOpen)} aria-expanded={menuOpen} aria-label="Open menu">☰</button>
         <a className="logo" href="#top" aria-label="Zuvee Duvee home">ZUVEE <i>DUVEE</i></a>
         <nav className={menuOpen ? "open" : ""} aria-label="Main navigation">
-          <a href="/shop">Shop</a><a href="/shop">Shop by Age</a><a href="#development">Development</a><a href="#learn">Learn</a><a href="#philosophy">Our Story</a>
+          <a href="/shop">Shop</a><a href="/shop">Shop by Age</a><a href="#development">Development</a><Link href="/articles">Learn</Link><a href="#philosophy">Our Story</a>
         </nav>
         <div className="header-actions">
           <LanguageSwitcher />
@@ -135,8 +136,8 @@ export default function Home() {
       </section>
 
       <section className="section learn-section" id="learn">
-        <div className="section-heading split"><div><p className="eyebrow">NOTES FOR THOUGHTFUL PARENTS</p><h2>Growing together</h2></div><a className="text-link" href="#guides">Explore Guides <ArrowIcon /></a></div>
-        <div className="article-grid">{[["01", "How fine motor skills develop through everyday play", "6 min read"], ["02", "Choosing toys for your child's current stage", "5 min read"], ["03", "Why children don't need dozens of toys", "4 min read"]].map(([num, title, time]) => <a href="#guides" key={num}><div className={`article-image article-${num}`}><span>{num}</span></div><p>DEVELOPMENT NOTES · {time}</p><h3>{title}</h3><span className="read-link">Read article →</span></a>)}</div>
+        <div className="section-heading split"><div><p className="eyebrow">NOTES FOR THOUGHTFUL PARENTS</p><h2>Growing together</h2></div><Link className="text-link" href="/articles">Explore all articles <ArrowIcon /></Link></div>
+        <div className="article-grid">{[["01", "How fine motor skills develop through everyday play", "6 min read", "fine-motor-play"], ["02", "Choosing toys for your child's current stage", "5 min read", "choosing-toys-by-stage"], ["03", "Why children don't need dozens of toys", "4 min read", "fewer-better-toys"]].map(([num, title, time, slug]) => <Link href={`/articles/${slug}`} key={num}><div className={`article-image article-${num}`}><span>{num}</span></div><p>DEVELOPMENT NOTES · {time}</p><h3>{title}</h3><span className="read-link">Read article →</span></Link>)}</div>
       </section>
 
       <section className="community-section">
