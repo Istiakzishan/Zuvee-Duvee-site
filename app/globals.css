@@ -278,6 +278,8 @@ html[data-lang="bn"] .product-tags.lang-bn { display:flex!important; }
 .account-summary span { color:#748078; font-size:10px; letter-spacing:.12em; margin-bottom:5px; text-transform:uppercase; }
 .account-summary strong { font-family:var(--display); font-size:27px; font-weight:500; }
 .account-summary small { color:#68736c; margin-top:3px; }
+.account-actions { align-items:flex-end; display:flex; flex-direction:column; gap:8px; }
+.account-actions .link-button { margin:0; }
 .wishlist-section { padding-top:24px; }
 .wishlist-heading { align-items:end; display:flex; gap:18px; justify-content:space-between; }
 .wishlist-heading h3 { font-family:var(--display); font-size:34px; font-weight:500; margin:0; }
