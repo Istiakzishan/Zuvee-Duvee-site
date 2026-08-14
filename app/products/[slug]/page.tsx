@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import CommerceExperience from "../../CommerceExperience";
 import LanguageSwitcher from "../../LanguageSwitcher";
 import ProductPurchase from "../ProductPurchase";
 import { products } from "../product-data";
@@ -73,7 +72,6 @@ export default async function ProductPage({ params }: PageProps) {
 
   return (
     <main className="product-page">
-      <CommerceExperience />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
 

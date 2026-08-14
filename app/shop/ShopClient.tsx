@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import CommerceExperience, { openAccount, openCart } from "../CommerceExperience";
+import { openAccount, openCart } from "../CommerceExperience";
 import LanguageSwitcher from "../LanguageSwitcher";
 import ProductCard from "../products/ProductCard";
 import { useCatalogProducts } from "../products/useCatalogProducts";
@@ -90,7 +90,6 @@ export default function ShopClient({ initialParams }: { initialParams: InitialPa
 
   return (
     <main className="shop-page">
-      <CommerceExperience />
       <div className="announcement">Thoughtfully selected for growing little ones <span>·</span> Delivery across Bangladesh</div>
       <header className="site-header">
         <button className="mobile-icon" onClick={() => setMenuOpen(!menuOpen)} aria-expanded={menuOpen} aria-label="Open menu">☰</button>
