@@ -27,6 +27,7 @@ export default function ProductCard({ product }: { product: ProductDetail }) {
         />
         <a className="product-image-link" href={href} aria-label={`View details for ${product.name}`} />
         <span className="age-pill"><LangText en={product.age} bn={product.ageBn} /></span>
+        <span className="brain-hover" aria-hidden="true"><span className="brain-mark"><i /><i /><i /></span><span className="brain-hover-label">Curiosity in motion</span></span>
         <button className={`heart ${liked ? "active" : ""}`} type="button" onClick={() => setLiked(!liked)} aria-label={`${liked ? "Remove" : "Add"} ${product.name} ${liked ? "from" : "to"} wishlist`}>
           {liked ? "♥" : "♡"}
         </button>
