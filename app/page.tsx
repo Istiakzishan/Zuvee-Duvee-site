@@ -6,7 +6,7 @@ import Link from "next/link";
 import CommerceExperience, { openAccount, openCart } from "./CommerceExperience";
 import LanguageSwitcher from "./LanguageSwitcher";
 import ProductCard from "./products/ProductCard";
-import { products } from "./products/product-data";
+import { useCatalogProducts } from "./products/useCatalogProducts";
 
 const development = [
   ["Fine Motor Skills", "Small movements that invite turning, grasping and placing.", "fine-motor"],
@@ -44,6 +44,7 @@ function ProductRail({ children }: { children: ReactNode }) {
 }
 
 export default function Home() {
+  const products = useCatalogProducts();
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [email, setEmail] = useState("");

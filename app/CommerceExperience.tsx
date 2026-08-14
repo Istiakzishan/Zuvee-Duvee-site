@@ -3,22 +3,19 @@
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 
 type CartItem = {
+  productId?: string;
+  variantId: string;
   slug: string;
   name: string;
   price: string;
   priceValue: string;
   quantity: number;
-};
-
-type Account = {
-  name: string;
-  email: string;
+  stock?: number;
 };
 
 type CheckoutStep = "cart" | "details" | "payment" | "review" | "success";
 
 const cartKey = "zuvee-duvee-cart";
-const accountKey = "zuvee-duvee-account";
 
 function readStored<T>(key: string, fallback: T): T {
   if (typeof window === "undefined") return fallback;
@@ -51,12 +48,12 @@ export function openAccount() {
 
 export default function CommerceExperience() {
   const [cart, setCart] = useState<CartItem[]>(() => readStored<CartItem[]>(cartKey, []));
-  const [account, setAccount] = useState<Account | null>(() => readStored<Account | null>(accountKey, null));
   const [panel, setPanel] = useState<"cart" | "account" | null>(null);
   const [checkoutStep, setCheckoutStep] = useState<CheckoutStep>("cart");
-  const [accountMode, setAccountMode] = useState<"login" | "signup">("login");
   const [orderNumber, setOrderNumber] = useState("");
   const [toast, setToast] = useState("");
+  const [orderError, setOrderError] = useState("");
+  const [placingOrder, setPlacingOrder] = useState(false);
   const [checkout, setCheckout] = useState({
     name: "",
     email: "",
@@ -68,6 +65,7 @@ export default function CommerceExperience() {
   });
   const panelRef = useRef<HTMLElement | null>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
+  const checkoutRequestIdRef = useRef<string | null>(null);
 
   useEffect(() => {
     window.localStorage.setItem(cartKey, JSON.stringify(cart));
@@ -79,21 +77,13 @@ export default function CommerceExperience() {
   }, [cart]);
 
   useEffect(() => {
-    if (account) window.localStorage.setItem(accountKey, JSON.stringify(account));
-    else window.localStorage.removeItem(accountKey);
-    document.querySelectorAll<HTMLElement>("[data-account-label]").forEach((node) => {
-      node.textContent = account ? "Account" : "Account";
-    });
-  }, [account]);
-
-  useEffect(() => {
     const add = (event: Event) => {
       const item = (event as CustomEvent<CartItem>).detail;
       previousFocusRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
       setCart((current) => {
         const existing = current.find((entry) => entry.slug === item.slug);
         if (existing) {
-          return current.map((entry) => entry.slug === item.slug ? { ...entry, quantity: entry.quantity + item.quantity } : entry);
+          return current.map((entry) => entry.slug === item.slug ? { ...entry, ...item, quantity: Math.min(entry.quantity + item.quantity, item.stock || 10) } : entry);
         }
         return [...current, item];
       });
@@ -109,7 +99,6 @@ export default function CommerceExperience() {
     };
     const showAccount = () => {
       previousFocusRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
-      setAccountMode(account ? "login" : "signup");
       setPanel("account");
     };
 
@@ -136,7 +125,7 @@ export default function CommerceExperience() {
       window.removeEventListener("zuvee:open-account", showAccount);
       document.removeEventListener("click", click);
     };
-  }, [account]);
+  }, []);
 
   useEffect(() => {
     if (!panel) return;
@@ -182,25 +171,12 @@ export default function CommerceExperience() {
   function updateQuantity(slug: string, quantity: number) {
     setCart((current) => current.flatMap((item) => {
       if (item.slug !== slug) return [item];
-      return quantity < 1 ? [] : [{ ...item, quantity }];
+      return quantity < 1 ? [] : [{ ...item, quantity: Math.min(quantity, item.stock || 10) }];
     }));
-  }
-
-  function handleAccountSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    const name = String(data.get("name") || "Zuvee Duvee Customer");
-    const email = String(data.get("email") || "");
-    if (!email) return;
-    const nextAccount = { name, email };
-    setAccount(nextAccount);
-    setCheckout((current) => ({ ...current, name: current.name || name, email: current.email || email }));
-    setPanel("account");
   }
 
   function startCheckout() {
     if (!cart.length) return;
-    setCheckout((current) => ({ ...current, name: current.name || account?.name || "", email: current.email || account?.email || "" }));
     setCheckoutStep("details");
   }
 
@@ -209,10 +185,37 @@ export default function CommerceExperience() {
     setCheckoutStep("payment");
   }
 
-  function placeOrder() {
-    setOrderNumber(`ZD-${Date.now().toString().slice(-6)}`);
-    setCheckoutStep("success");
-    setCart([]);
+  async function placeOrder() {
+    setOrderError("");
+    if (cart.some((item) => !item.variantId)) {
+      setOrderError("Your bag contains an older product entry. Remove it and add the product again.");
+      return;
+    }
+    setPlacingOrder(true);
+    try {
+      checkoutRequestIdRef.current ||= crypto.randomUUID();
+      const response = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          idempotency_key: checkoutRequestIdRef.current,
+          payment_method: "cod",
+          customer_note: checkout.note,
+          customer: { full_name: checkout.name, email: checkout.email, phone: checkout.phone, address: checkout.address, city: checkout.city },
+          items: cart.map((item) => ({ variant_id: item.variantId, quantity: item.quantity })),
+        }),
+      });
+      const result = await response.json() as { order?: { order_number?: string }; error?: string };
+      if (!response.ok || !result.order?.order_number) throw new Error(result.error || "Order could not be placed.");
+      setOrderNumber(result.order.order_number);
+      setCheckoutStep("success");
+      setCart([]);
+      checkoutRequestIdRef.current = null;
+    } catch (error) {
+      setOrderError(error instanceof Error ? error.message : "Order could not be placed. Please try again.");
+    } finally {
+      setPlacingOrder(false);
+    }
   }
 
   function closePanel() {
@@ -232,37 +235,18 @@ export default function CommerceExperience() {
         <div className="commerce-panel-header">
           <div>
             <p className="eyebrow">{panel === "cart" ? "YOUR BAG" : "ACCOUNT"}</p>
-            <h2 id={headingId}>{panel === "cart" ? "Complete your order" : account ? "Your account" : "Sign in or create account"}</h2>
+            <h2 id={headingId}>{panel === "cart" ? "Complete your order" : "Customer account"}</h2>
           </div>
           <button type="button" onClick={closePanel} aria-label="Close">Close</button>
         </div>
 
         {panel === "account" && (
           <div className="account-flow">
-            {account ? (
-              <div className="account-card">
-                <h3>Welcome, {account.name}</h3>
-                <p>{account.email}</p>
-                <div className="commerce-actions">
-                  <button type="button" onClick={() => { setPanel("cart"); setCheckoutStep("cart"); }}>View bag</button>
-                  <button type="button" className="secondary" onClick={() => setAccount(null)}>Log out</button>
-                </div>
-              </div>
-            ) : (
-              <>
-                <div className="commerce-tabs">
-                  <button className={accountMode === "login" ? "active" : ""} type="button" onClick={() => setAccountMode("login")}>Log in</button>
-                  <button className={accountMode === "signup" ? "active" : ""} type="button" onClick={() => setAccountMode("signup")}>Sign up</button>
-                </div>
-                <form className="commerce-form" onSubmit={handleAccountSubmit}>
-                  {accountMode === "signup" && <label>Full name<input name="name" required placeholder="Your name" /></label>}
-                  <label>Email address<input name="email" type="email" required placeholder="you@example.com" /></label>
-                  <label>Password<input name="password" type="password" required placeholder="Minimum 6 characters" minLength={6} /></label>
-                  <button type="submit">{accountMode === "signup" ? "Create account" : "Log in"}</button>
-                  <p>This demo stores your session on this device only. Connect a real auth provider before accepting real customer accounts.</p>
-                </form>
-              </>
-            )}
+            <div className="account-card">
+              <h3>Guest checkout is available</h3>
+              <p>Customer accounts are not enabled yet. You can place an order securely without creating an account.</p>
+              <div className="commerce-actions"><button type="button" onClick={() => { setPanel("cart"); setCheckoutStep("cart"); }}>View bag</button></div>
+            </div>
           </div>
         )}
 
@@ -313,8 +297,8 @@ export default function CommerceExperience() {
 
             {checkoutStep === "payment" && (
               <div className="commerce-form">
-                {["Cash on delivery", "bKash payment", "Card payment"].map((method) => <label className="radio-row" key={method}><input type="radio" checked={checkout.payment === method} onChange={() => setCheckout({ ...checkout, payment: method })} />{method}</label>)}
-                <p className="checkout-helper">{checkout.payment === "Cash on delivery" ? "Pay when your order is delivered. We will call to confirm before dispatch." : checkout.payment === "bKash payment" ? "We will share bKash payment instructions after reviewing your order." : "Card payment is prepared as a demo option. Connect a payment provider before accepting real card payments."}</p>
+                <label className="radio-row"><input type="radio" checked readOnly />Cash on delivery</label>
+                <p className="checkout-helper">Pay when your order is delivered. Online payment will appear here after a payment gateway is connected.</p>
                 <label>Order note<textarea value={checkout.note} onChange={(event) => setCheckout({ ...checkout, note: event.target.value })} placeholder="Optional delivery note" /></label>
                 <button type="button" onClick={() => setCheckoutStep("review")}>Review order</button>
               </div>
@@ -323,7 +307,8 @@ export default function CommerceExperience() {
             {checkoutStep === "review" && (
               <div className="review-order">
                 <div className="order-summary"><p><span>Customer</span><b>{checkout.name}</b></p><p><span>Phone</span><b>{checkout.phone}</b></p><p><span>Payment</span><b>{checkout.payment}</b></p><p><span>Total</span><b>{formatPrice(payable)}</b></p></div>
-                <button className="checkout-primary" type="button" onClick={placeOrder}>Place order</button>
+                {orderError && <p className="checkout-helper" role="alert">{orderError}</p>}
+                <button className="checkout-primary" type="button" disabled={placingOrder} onClick={() => void placeOrder()}>{placingOrder ? "Placing order..." : "Place order"}</button>
                 <button type="button" className="link-button" onClick={() => setCheckoutStep("details")}>Edit details</button>
               </div>
             )}

@@ -5,7 +5,7 @@ import Link from "next/link";
 import CommerceExperience, { openAccount, openCart } from "../CommerceExperience";
 import LanguageSwitcher from "../LanguageSwitcher";
 import ProductCard from "../products/ProductCard";
-import { products } from "../products/product-data";
+import { useCatalogProducts } from "../products/useCatalogProducts";
 
 type InitialParams = {
   age?: string;
@@ -53,6 +53,7 @@ function matchesPrice(price: number, selectedPrice: string) {
 }
 
 export default function ShopClient({ initialParams }: { initialParams: InitialParams }) {
+  const products = useCatalogProducts();
   const [menuOpen, setMenuOpen] = useState(false);
   const [selectedAge, setSelectedAge] = useState(initialParams.age || "");
   const [selectedSkills, setSelectedSkills] = useState<string[]>(initialParams.skill ? [initialParams.skill] : []);
@@ -73,7 +74,7 @@ export default function ShopClient({ initialParams }: { initialParams: InitialPa
         if (sort === "sale") return Number(b.isSale) - Number(a.isSale) || Number(a.priceValue) - Number(b.priceValue);
         return b.newestRank - a.newestRank;
       });
-  }, [saleOnly, selectedAge, selectedPrice, selectedSkills, sort]);
+  }, [products, saleOnly, selectedAge, selectedPrice, selectedSkills, sort]);
 
   const toggleSkill = (value: string) => {
     setSelectedSkills((current) => current.includes(value) ? current.filter((skill) => skill !== value) : [...current, value]);
