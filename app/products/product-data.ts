@@ -8,9 +8,15 @@ export type ProductDetail = {
   ageBn: string;
   price: string;
   priceValue: string;
+  regularPrice: string;
+  regularPriceValue: string;
+  isSale: boolean;
   purchasable: boolean;
   tags: string[];
   tagsBn: string[];
+  ageFilters: string[];
+  skillFilters: string[];
+  newestRank: number;
   position: string;
   intro: string;
   introBn: string;
@@ -28,11 +34,13 @@ export type ProductDetail = {
   gallery: { src: string; alt: string; altBn: string; position?: string }[];
 };
 
-const commonGallery = (mainSrc: string, position: string, name: string, nameBn: string): ProductDetail["gallery"] => [
-  { src: mainSrc, alt: `${name} product photo`, altBn: `${nameBn} পণ্যের ছবি`, position },
-  { src: "/story-zuvee-duvee.webp", alt: "Small hands exploring activity components", altBn: "ছোট হাত অ্যাক্টিভিটি অংশ অন্বেষণ করছে" },
-  { src: "/hero-zuvee-duvee.webp", alt: "Parent and child sharing a calm play moment", altBn: "অভিভাবক ও শিশু শান্ত খেলার মুহূর্ত ভাগ করছে", position: "50% center" },
-];
+const commonGallery = (images: string[], position: string, name: string, nameBn: string): ProductDetail["gallery"] =>
+  images.map((src, index) => ({
+    src,
+    alt: index === 0 ? `${name} product photo` : `${name} alternate product view ${index + 1}`,
+    altBn: index === 0 ? `${nameBn} পণ্যের ছবি` : `${nameBn} পণ্যের অন্য ছবি ${index + 1}`,
+    position: index === 0 ? position : "center",
+  }));
 
 export const products: ProductDetail[] = [
   {
@@ -43,11 +51,17 @@ export const products: ProductDetail[] = [
     shortNameBn: "১০-ইন-১ বিজি কিউব",
     age: "Age pending",
     ageBn: "বয়স যাচাই বাকি",
-    price: "৳ 2,450",
-    priceValue: "2450",
+    price: "৳ 890",
+    priceValue: "890",
+    regularPrice: "৳ 1,000",
+    regularPriceValue: "1000",
+    isSale: true,
     purchasable: true,
     tags: ["Fine motor", "Sensory", "Hand-eye"],
     tagsBn: ["ফাইন মোটর", "সেন্সরি", "হাত-চোখ"],
+    ageFilters: ["pending"],
+    skillFilters: ["fine-motor", "sensory", "hand-eye", "creativity"],
+    newestRank: 5,
     position: "13% center",
     intro: "A portable 10-activity busy cube for hands-on sensory play, supporting fine-motor practice and hand-eye coordination.",
     introBn: "১০টি মজার কার্যক্রমসহ বহনযোগ্য একটি বিজি কিউব, যা হাতে-কলমে খেলার মাধ্যমে সূক্ষ্ম নড়াচড়া ও হাত-চোখের সমন্বয়ের অনুশীলনে সহায়তা করে।",
@@ -74,7 +88,7 @@ export const products: ProductDetail[] = [
     seoTitleBn: "কৌতূহলী হাতের জন্য কমপ্যাক্ট সহায়ক খেলা।",
     seoCopy: "For parents comparing activity toys in Bangladesh, this busy cube keeps the focus on hands-on actions children can repeat and understand.",
     seoCopyBn: "বাংলাদেশে অ্যাক্টিভিটি টয় খুঁজছেন এমন অভিভাবকদের জন্য এই বিজি কিউব হাতে-কলমে করা যায় এমন পুনরাবৃত্তিমূলক কাজকে গুরুত্ব দেয়।",
-    gallery: commonGallery("/product-busy-cube.webp", "center", "10-in-1 Montessori Busy Cube", "১০-ইন-১ মন্টেসরি বিজি কিউব"),
+    gallery: commonGallery(["/product-busy-cube.webp", "/product-busy-cube-2.jpg", "/product-busy-cube.webp"], "center", "10-in-1 Montessori Busy Cube", "১০-ইন-১ মন্টেসরি বিজি কিউব"),
   },
   {
     slug: "magnetic-fishing-shape-puzzle",
@@ -84,11 +98,17 @@ export const products: ProductDetail[] = [
     shortNameBn: "ম্যাগনেটিক ফিশিং ও শেপ পাজল",
     age: "2+ years",
     ageBn: "২+ বছর",
-    price: "৳ 1,280",
-    priceValue: "1280",
+    price: "৳ 660",
+    priceValue: "660",
+    regularPrice: "৳ 780",
+    regularPriceValue: "780",
+    isSale: true,
     purchasable: true,
     tags: ["Matching", "Problem solving", "Fine motor"],
     tagsBn: ["মেলানো", "সমস্যা সমাধান", "ফাইন মোটর"],
+    ageFilters: ["1-3", "3-6"],
+    skillFilters: ["fine-motor", "hand-eye", "shape-recognition", "problem-solving", "logic", "creativity"],
+    newestRank: 4,
     position: "50% center",
     intro: "A 2-in-1 magnetic fishing and wooden shape puzzle with 16 colorful blocks for matching, stacking and fine-motor play.",
     introBn: "ম্যাগনেটিক ফিশিং ও ১৬টি রঙিন কাঠের ব্লকসহ ২-ইন-১ শেপ পাজল, যা মেলানো, সাজানো ও সূক্ষ্ম নড়াচড়ার খেলায় সহায়তা করে।",
@@ -115,7 +135,7 @@ export const products: ProductDetail[] = [
     seoTitleBn: "মজার ফিশিং চ্যালেঞ্জসহ শেপ মেলানোর খেলা।",
     seoCopy: "This 2-in-1 set gives toddlers and preschoolers a simple way to practise matching, sorting and hand-eye coordination through hands-on play.",
     seoCopyBn: "এই ২-ইন-১ সেট টডলার ও প্রিস্কুল শিশুদের হাতে-কলমে খেলার মাধ্যমে মেলানো, সাজানো ও হাত-চোখের সমন্বয় অনুশীলনের সহজ সুযোগ দেয়।",
-    gallery: commonGallery("/product-fishing-shape-puzzle.webp", "center", "Magnetic Fishing & Shape Puzzle", "ম্যাগনেটিক ফিশিং ও শেপ পাজল"),
+    gallery: commonGallery(["/product-fishing-shape-puzzle.webp", "/product-fishing-shape-puzzle-2.jpg", "/product-fishing-shape-puzzle-3.jpg"], "center", "Magnetic Fishing & Shape Puzzle", "ম্যাগনেটিক ফিশিং ও শেপ পাজল"),
   },
   {
     slug: "wooden-shape-matching-board",
@@ -125,11 +145,17 @@ export const products: ProductDetail[] = [
     shortNameBn: "কাঠের শেপ ম্যাচিং বোর্ড",
     age: "2-5 years",
     ageBn: "২-৫ বছর",
-    price: "৳ 1,850",
-    priceValue: "1850",
+    price: "৳ 640",
+    priceValue: "640",
+    regularPrice: "৳ 760",
+    regularPriceValue: "760",
+    isSale: true,
     purchasable: true,
     tags: ["Shape recognition", "Sorting", "Hand-eye"],
     tagsBn: ["আকার চেনা", "সাজানো", "হাত-চোখ"],
+    ageFilters: ["1-3", "3-6"],
+    skillFilters: ["fine-motor", "hand-eye", "shape-recognition", "problem-solving", "logic"],
+    newestRank: 3,
     position: "86% center",
     intro: "A colorful five-column wooden matching board for sorting shapes, recognizing colors and practicing hand-eye coordination.",
     introBn: "রঙিন পাঁচ-কলামের কাঠের ম্যাচিং বোর্ড, যা আকার সাজানো, রং চেনা এবং হাত-চোখের সমন্বয়ের অনুশীলনে সহায়তা করে।",
@@ -156,7 +182,7 @@ export const products: ProductDetail[] = [
     seoTitleBn: "মনোযোগী শেপ শেখার জন্য সহজ বোর্ড।",
     seoCopy: "Shape matching supports calm, repeatable problem solving when children can see the task clearly and try again at their own pace.",
     seoCopyBn: "শিশু যখন কাজটি স্পষ্টভাবে দেখতে পায় এবং নিজের গতিতে আবার চেষ্টা করতে পারে, তখন শেপ মেলানো শান্ত ও পুনরাবৃত্তিমূলক সমস্যা সমাধানে সহায়তা করে।",
-    gallery: commonGallery("/product-shape-matching-board.jpg", "center", "Wooden Shape Matching Board", "কাঠের শেপ ম্যাচিং বোর্ড"),
+    gallery: commonGallery(["/product-shape-matching-board.jpg", "/product-shape-matching-board-2.jpg", "/product-shape-matching-board-3.jpg"], "center", "Wooden Shape Matching Board", "কাঠের শেপ ম্যাচিং বোর্ড"),
   },
   {
     slug: "magnetic-tangram-puzzle-book",
@@ -166,11 +192,17 @@ export const products: ProductDetail[] = [
     shortNameBn: "ম্যাগনেটিক ট্যানগ্রাম পাজল বুক",
     age: "3+ years",
     ageBn: "৩+ বছর",
-    price: "৳ 2,150",
-    priceValue: "2150",
+    price: "৳ 540",
+    priceValue: "540",
+    regularPrice: "৳ 640",
+    regularPriceValue: "640",
+    isSale: true,
     purchasable: true,
     tags: ["Logic", "Creativity", "Spatial thinking"],
     tagsBn: ["যুক্তি", "সৃজনশীলতা", "স্থানিক চিন্তা"],
+    ageFilters: ["3-6"],
+    skillFilters: ["fine-motor", "problem-solving", "logic", "creativity", "focus", "geometry"],
+    newestRank: 2,
     position: "38% center",
     intro: "A portable magnetic tangram book for building pictures, letters, numbers and patterns while practicing logic and spatial thinking.",
     introBn: "ছবি, অক্ষর, সংখ্যা ও প্যাটার্ন তৈরির জন্য বহনযোগ্য ম্যাগনেটিক ট্যানগ্রাম বুক, যা যুক্তি ও স্থানিক চিন্তার অনুশীলনে সহায়তা করে।",
@@ -197,7 +229,7 @@ export const products: ProductDetail[] = [
     seoTitleBn: "যুক্তি ও কল্পনার জন্য বহনযোগ্য ট্যানগ্রাম খেলা।",
     seoCopy: "Magnetic tangram play gives preschoolers a practical way to explore geometry, patterns and creative problem solving at home or while travelling.",
     seoCopyBn: "ম্যাগনেটিক ট্যানগ্রাম খেলা প্রিস্কুল শিশুদের বাসায় বা ভ্রমণে জ্যামিতি, প্যাটার্ন ও সৃজনশীল সমস্যা সমাধান অন্বেষণের বাস্তব সুযোগ দেয়।",
-    gallery: commonGallery("/product-tangram-puzzle-book.webp", "center", "Magnetic Tangram Puzzle Book", "ম্যাগনেটিক ট্যানগ্রাম পাজল বুক"),
+    gallery: commonGallery(["/product-tangram-puzzle-book.webp", "/product-tangram-puzzle-book-2.jpg", "/product-tangram-puzzle-book-3.jpg"], "center", "Magnetic Tangram Puzzle Book", "ম্যাগনেটিক ট্যানগ্রাম পাজল বুক"),
   },
   {
     slug: "wooden-geoboard-set",
@@ -207,11 +239,17 @@ export const products: ProductDetail[] = [
     shortNameBn: "কাঠের জিওবোর্ড সেট",
     age: "3+ years",
     ageBn: "৩+ বছর",
-    price: "Price coming soon",
-    priceValue: "0",
-    purchasable: false,
+    price: "৳ 990",
+    priceValue: "990",
+    regularPrice: "৳ 1,180",
+    regularPriceValue: "1180",
+    isSale: true,
+    purchasable: true,
     tags: ["Geometry", "Fine motor", "Creativity"],
     tagsBn: ["জ্যামিতি", "ফাইন মোটর", "সৃজনশীলতা"],
+    ageFilters: ["3-6"],
+    skillFilters: ["fine-motor", "hand-eye", "problem-solving", "creativity", "geometry", "shape-recognition"],
+    newestRank: 1,
     position: "68% center",
     intro: "A wooden 64-peg geoboard with activity cards and colorful bands for creating shapes, letters, pictures and patterns.",
     introBn: "৬৪টি পেগ, অ্যাক্টিভিটি কার্ড ও রঙিন ব্যান্ডসহ কাঠের জিওবোর্ড, যা আকার, অক্ষর, ছবি ও প্যাটার্ন তৈরির খেলায় ব্যবহার করা যায়।",
@@ -238,7 +276,7 @@ export const products: ProductDetail[] = [
     seoTitleBn: "মনোযোগী সৃজনশীল খেলার জন্য বানানো যায় এমন জ্যামিতি।",
     seoCopy: "A geoboard helps children turn shape ideas into visible patterns while practising finger control, coordination and early math thinking.",
     seoCopyBn: "জিওবোর্ড শিশুকে আকারের ধারণাকে দৃশ্যমান প্যাটার্নে রূপ দিতে সহায়তা করে, পাশাপাশি আঙুলের নিয়ন্ত্রণ, সমন্বয় ও প্রাথমিক গণিতচিন্তার অনুশীলন করায়।",
-    gallery: commonGallery("/product-geoboard-set.jpg", "center", "Wooden Geoboard Set", "কাঠের জিওবোর্ড সেট"),
+    gallery: commonGallery(["/product-geoboard-set.jpg", "/product-geoboard-set-2.jpg", "/product-geoboard-set-3.jpg"], "center", "Wooden Geoboard Set", "কাঠের জিওবোর্ড সেট"),
   },
 ];
 

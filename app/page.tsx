@@ -2,19 +2,18 @@
 
 import type { ReactNode } from "react";
 import { useState } from "react";
-import CommerceExperience, { addProductToCart, openAccount, openCart } from "./CommerceExperience";
+import CommerceExperience, { openAccount, openCart } from "./CommerceExperience";
 import LanguageSwitcher from "./LanguageSwitcher";
+import ProductCard from "./products/ProductCard";
 import { products } from "./products/product-data";
 
-type Product = typeof products[number];
-
 const development = [
-  ["Fine Motor Skills", "Small movements that invite turning, grasping and placing."],
-  ["Problem Solving", "Open-ended challenges that encourage trying another way."],
-  ["Sensory Discovery", "Textures, sounds and movement to notice and explore."],
-  ["Hand-Eye Coordination", "Play that brings looking and moving together."],
-  ["Creativity", "Room to imagine, arrange, build and begin again."],
-  ["Focus & Attention", "Calm play experiences worth staying with a little longer."],
+  ["Fine Motor Skills", "Small movements that invite turning, grasping and placing.", "fine-motor"],
+  ["Problem Solving", "Open-ended challenges that encourage trying another way.", "problem-solving"],
+  ["Sensory Discovery", "Textures, sounds and movement to notice and explore.", "sensory"],
+  ["Hand-Eye Coordination", "Play that brings looking and moving together.", "hand-eye"],
+  ["Creativity", "Room to imagine, arrange, build and begin again.", "creativity"],
+  ["Focus & Attention", "Calm play experiences worth staying with a little longer.", "focus"],
 ];
 
 const skillPhotos = [
@@ -32,36 +31,6 @@ function ArrowIcon() {
 
 function LangText({ en, bn }: { en: string; bn: string }) {
   return <><span className="lang-en">{en}</span><span className="lang-bn">{bn}</span></>;
-}
-
-function ProductCard({ product }: { product: Product }) {
-  const [liked, setLiked] = useState(false);
-  const [added, setAdded] = useState(false);
-  const href = `/products/${product.slug}`;
-  const shortTags = product.tags.slice(0, 2);
-  const shortTagsBn = product.tagsBn.slice(0, 2);
-  const purchasable = product.purchasable !== false && Number(product.priceValue) > 0;
-  return (
-    <article className="product-card">
-      <div className="product-image" style={{ backgroundImage: `url('${product.gallery[0].src}')`, backgroundPosition: product.gallery[0].position || product.position }}>
-        <a className="product-image-link" href={href} aria-label={`View details for ${product.name}`} />
-        <span className="age-pill"><LangText en={product.age} bn={product.ageBn} /></span>
-        <button className={`heart ${liked ? "active" : ""}`} onClick={() => setLiked(!liked)} aria-label={`${liked ? "Remove" : "Add"} ${product.name} ${liked ? "from" : "to"} wishlist`}>
-          {liked ? "♥" : "♡"}
-        </button>
-        <button className="quick-add" disabled={!purchasable} onClick={() => { if (!purchasable) return; addProductToCart({ slug: product.slug, name: product.name, price: product.price, priceValue: product.priceValue, quantity: 1 }); setAdded(true); window.setTimeout(() => setAdded(false), 1400); }} aria-label={`Quick add ${product.name} to bag`}>
-          {!purchasable ? "Soon" : added ? "Added" : "+ Add"}
-        </button>
-      </div>
-      <div className="product-info">
-        <div className="tags lang-en">{shortTags.map((tag) => <span key={tag}>{tag}</span>)}</div>
-        <div className="tags lang-bn">{shortTagsBn.map((tag) => <span key={tag}>{tag}</span>)}</div>
-        <h3><a href={href}><LangText en={product.shortName} bn={product.shortNameBn} /></a></h3>
-        <p>{product.price}</p>
-        <a className="product-details-link" href={href}><LangText en="View product details →" bn="পণ্যের বিস্তারিত দেখুন →" /></a>
-      </div>
-    </article>
-  );
 }
 
 function ProductRail({ children }: { children: ReactNode }) {
@@ -87,7 +56,7 @@ export default function Home() {
         <button className="mobile-icon" onClick={() => setMenuOpen(!menuOpen)} aria-expanded={menuOpen} aria-label="Open menu">☰</button>
         <a className="logo" href="#top" aria-label="Zuvee Duvee home">ZUVEE <i>DUVEE</i></a>
         <nav className={menuOpen ? "open" : ""} aria-label="Main navigation">
-          <a href="#products">Shop</a><a href="#age">Shop by Age</a><a href="#development">Development</a><a href="#learn">Learn</a><a href="#philosophy">Our Story</a>
+          <a href="/shop">Shop</a><a href="/shop">Shop by Age</a><a href="#development">Development</a><a href="#learn">Learn</a><a href="#philosophy">Our Story</a>
         </nav>
         <div className="header-actions">
           <LanguageSwitcher />
@@ -99,31 +68,31 @@ export default function Home() {
       </header>
 
       <section className="hero" id="top">
-        <div className="hero-copy"><p className="eyebrow"><LangText en="PLAY WITH PURPOSE" bn="উদ্দেশ্যপূর্ণ খেলা" /></p><h1><LangText en="Thoughtfully chosen for growing minds." bn="বড় হতে থাকা মনের জন্য বিবেচিত নির্বাচন।" /></h1><p><LangText en="Development-focused play and essentials, carefully selected for every little stage." bn="প্রতিটি ছোট পর্যায়ের জন্য বিকাশভিত্তিক খেলা ও প্রয়োজনীয় পণ্য, যত্ন নিয়ে বাছাই করা।" /></p><div className="button-row"><a className="button primary" href="#age"><LangText en="Shop by Age" bn="বয়স অনুযায়ী দেখুন" /></a><a className="text-link" href="#products"><LangText en="Explore All Products" bn="সব পণ্য দেখুন" /> <ArrowIcon /></a></div></div>
+        <div className="hero-copy"><p className="eyebrow"><LangText en="PLAY WITH PURPOSE" bn="উদ্দেশ্যপূর্ণ খেলা" /></p><h1><LangText en="Thoughtfully chosen for growing minds." bn="বড় হতে থাকা মনের জন্য বিবেচিত নির্বাচন।" /></h1><p><LangText en="Development-focused play and essentials, carefully selected for every little stage." bn="প্রতিটি ছোট পর্যায়ের জন্য বিকাশভিত্তিক খেলা ও প্রয়োজনীয় পণ্য, যত্ন নিয়ে বাছাই করা।" /></p><div className="button-row"><a className="button primary" href="/shop"><LangText en="Shop by Age" bn="বয়স অনুযায়ী দেখুন" /></a><a className="text-link" href="/shop"><LangText en="Explore All Products" bn="সব পণ্য দেখুন" /> <ArrowIcon /></a></div></div>
         <div className="hero-image" role="img" aria-label="A parent and child sharing a calm moment of play" />
       </section>
 
       <section className="section age-section" id="age">
         <div className="section-heading centered"><p className="eyebrow"><LangText en="SHOP BY THEIR STAGE" bn="শিশুর পর্যায় অনুযায়ী" /></p><h2><LangText en="Every stage brings something new." bn="প্রতিটি পর্যায়ে আসে নতুন কিছু।" /></h2><p><LangText en="Explore thoughtfully selected products for where your little one is right now." bn="আপনার শিশুর বর্তমান পর্যায়ের জন্য যত্ন নিয়ে বাছাই করা পণ্য দেখুন।" /></p></div>
         <div className="age-grid">
-          {[["4–10 Months", "Discovering the world", "baby"], ["1–3 Years", "Exploring & becoming independent", "toddler"], ["3–6 Years", "Thinking, creating & learning", "preschool"]].map(([title, desc, cls], i) => (
-            <a href="#products" className={`age-card ${cls}`} key={title}><div className="age-photo" style={{ backgroundPosition: `${i * 50}% center` }} /><span>0{i + 1}</span><div><h3>{title}</h3><p>{desc}</p></div><b aria-hidden="true">→</b></a>
+          {[["4–10 Months", "Discovering the world", "baby", "4-10"], ["1–3 Years", "Exploring & becoming independent", "toddler", "1-3"], ["3–6 Years", "Thinking, creating & learning", "preschool", "3-6"]].map(([title, desc, cls, age], i) => (
+            <a href={`/shop?age=${age}`} className={`age-card ${cls}`} key={title}><div className="age-photo" style={{ backgroundPosition: `${i * 50}% center` }} /><span>0{i + 1}</span><div><h3>{title}</h3><p>{desc}</p></div><b aria-hidden="true">→</b></a>
           ))}
         </div>
       </section>
 
       <section className="section product-section" id="products">
-        <div className="section-heading split"><div><p className="eyebrow"><LangText en="CAREFULLY CURATED" bn="যত্ন নিয়ে বাছাই" /></p><h2><LangText en="Zuvee Duvee favourites" bn="Zuvee Duvee পছন্দের পণ্য" /></h2></div><a className="text-link" href="#all-products"><LangText en="View all" bn="সব দেখুন" /> <ArrowIcon /></a></div>
+        <div className="section-heading split"><div><p className="eyebrow"><LangText en="CAREFULLY CURATED" bn="যত্ন নিয়ে বাছাই" /></p><h2><LangText en="Zuvee Duvee favourites" bn="Zuvee Duvee পছন্দের পণ্য" /></h2></div><a className="text-link" href="/shop"><LangText en="View all" bn="সব দেখুন" /> <ArrowIcon /></a></div>
         <ProductRail>{products.map((p) => <ProductCard product={p} key={p.name} />)}</ProductRail>
       </section>
 
       <section className="development-section" id="development">
         <div className="section-heading light"><p className="eyebrow"><LangText en="FOLLOW THEIR CURIOSITY" bn="কৌতূহলকে অনুসরণ করুন" /></p><h2><LangText en="What are they discovering today?" bn="আজ তারা কী আবিষ্কার করছে?" /></h2><p><LangText en="Find play experiences that support the skills they're beginning to explore." bn="যে দক্ষতাগুলো তারা অন্বেষণ শুরু করছে, সেগুলোকে সহায়তা করে এমন খেলা খুঁজুন।" /></p></div>
-        <div className="development-grid">{development.map(([title, copy], i) => <a href="#products" key={title} className="development-card"><span>0{i + 1}</span><div><h3>{title}</h3><p>{copy}</p></div><b>↗</b></a>)}</div>
+        <div className="development-grid">{development.map(([title, copy, skill], i) => <a href={`/shop?skill=${skill}`} key={title} className="development-card"><span>0{i + 1}</span><div><h3>{title}</h3><p>{copy}</p></div><b>↗</b></a>)}</div>
       </section>
 
       <section className="section skill-photo-section">
-        <div className="section-heading split"><div><p className="eyebrow"><LangText en="PLAY THAT SUPPORTS GROWTH" bn="বিকাশে সহায়ক খেলা" /></p><h2><LangText en="Six ways little ones learn through play" bn="খেলার মাধ্যমে শেখার ছয়টি পথ" /></h2><p><LangText en="Happy, everyday play moments connected to the developmental skills families often look for." bn="পরিবার যে বিকাশগত দক্ষতাগুলো খোঁজে, সেগুলোর সঙ্গে যুক্ত আনন্দময় দৈনন্দিন খেলার মুহূর্ত।" /></p></div><a className="text-link" href="#products"><LangText en="Shop supportive play" bn="সহায়ক পণ্য দেখুন" /> <ArrowIcon /></a></div>
+        <div className="section-heading split"><div><p className="eyebrow"><LangText en="PLAY THAT SUPPORTS GROWTH" bn="বিকাশে সহায়ক খেলা" /></p><h2><LangText en="Six ways little ones learn through play" bn="খেলার মাধ্যমে শেখার ছয়টি পথ" /></h2><p><LangText en="Happy, everyday play moments connected to the developmental skills families often look for." bn="পরিবার যে বিকাশগত দক্ষতাগুলো খোঁজে, সেগুলোর সঙ্গে যুক্ত আনন্দময় দৈনন্দিন খেলার মুহূর্ত।" /></p></div><a className="text-link" href="/shop"><LangText en="Shop supportive play" bn="সহায়ক পণ্য দেখুন" /> <ArrowIcon /></a></div>
         <div className="skill-photo-grid">
           {skillPhotos.map(([title, copy, position], i) => (
             <article className="skill-photo-card" key={title}>
@@ -142,11 +111,11 @@ export default function Home() {
 
       <section className="story-section">
         <div className="story-image" role="img" aria-label="Small hands exploring an activity toy" />
-        <div className="story-copy"><p className="eyebrow"><LangText en="FINE MOTOR DEVELOPMENT" bn="ফাইন মোটর বিকাশ" /></p><h2><LangText en="Small hands are learning a lot." bn="ছোট হাত অনেক কিছু শিখছে।" /></h2><p><LangText en="Turning, pulling, pressing and grasping give children opportunities to practise controlled hand movements—one curious action at a time." bn="ঘোরানো, টানা, চাপ দেওয়া ও ধরা শিশুকে নিয়ন্ত্রিত হাতের নড়াচড়া অনুশীলনের সুযোগ দেয়, একেকটি কৌতূহলী কাজের মাধ্যমে।" /></p><a className="button outline" href="#products"><LangText en="Explore Fine Motor Play" bn="ফাইন মোটর পণ্য দেখুন" /></a></div>
+        <div className="story-copy"><p className="eyebrow"><LangText en="FINE MOTOR DEVELOPMENT" bn="ফাইন মোটর বিকাশ" /></p><h2><LangText en="Small hands are learning a lot." bn="ছোট হাত অনেক কিছু শিখছে।" /></h2><p><LangText en="Turning, pulling, pressing and grasping give children opportunities to practise controlled hand movements—one curious action at a time." bn="ঘোরানো, টানা, চাপ দেওয়া ও ধরা শিশুকে নিয়ন্ত্রিত হাতের নড়াচড়া অনুশীলনের সুযোগ দেয়, একেকটি কৌতূহলী কাজের মাধ্যমে।" /></p><a className="button outline" href="/shop?skill=fine-motor"><LangText en="Explore Fine Motor Play" bn="ফাইন মোটর পণ্য দেখুন" /></a></div>
       </section>
 
       <section className="section newly-section">
-        <div className="section-heading split"><div><p className="eyebrow"><LangText en="JUST ARRIVED" bn="নতুন যোগ হয়েছে" /></p><h2><LangText en="Newly selected" bn="নতুন বাছাই" /></h2><p><LangText en="Recent additions to our carefully curated collection." bn="আমাদের যত্ন নিয়ে বাছাই করা সংগ্রহে সাম্প্রতিক সংযোজন।" /></p></div><a className="text-link" href="#all-products"><LangText en="View all" bn="সব দেখুন" /> <ArrowIcon /></a></div>
+        <div className="section-heading split"><div><p className="eyebrow"><LangText en="JUST ARRIVED" bn="নতুন যোগ হয়েছে" /></p><h2><LangText en="Newly selected" bn="নতুন বাছাই" /></h2><p><LangText en="Recent additions to our carefully curated collection." bn="আমাদের যত্ন নিয়ে বাছাই করা সংগ্রহে সাম্প্রতিক সংযোজন।" /></p></div><a className="text-link" href="/shop?sort=newest"><LangText en="View all" bn="সব দেখুন" /> <ArrowIcon /></a></div>
         <ProductRail>{products.slice().reverse().slice(0, 3).map((p) => <ProductCard product={p} key={`new-${p.name}`} />)}</ProductRail>
       </section>
 
@@ -182,7 +151,7 @@ export default function Home() {
 
       <footer>
         <div className="footer-brand"><a className="logo" href="#top">ZUVEE <i>DUVEE</i></a><p>You don&apos;t need everything;<br />you need the right things.</p><span>Dhaka, Bangladesh</span></div>
-        {[["SHOP", "Shop All,New Arrivals,Shop by Age,Shop by Development"], ["ZUVEE DUVEE", "Our Story,Our Philosophy,How We Choose,Learn"], ["HELP", "Contact,Delivery,Returns & Exchanges,FAQ"], ["FOLLOW", "Facebook,Instagram,WhatsApp"]].map(([title, links]) => <div className="footer-column" key={title}><h3>{title}</h3>{links.split(",").map(link => <a href="#" key={link}>{link}</a>)}</div>)}
+        {[["SHOP", [["Shop All", "/shop"], ["New Arrivals", "/shop?sort=newest"], ["Shop by Age", "/shop"], ["Shop by Development", "/shop?skill=fine-motor"]]], ["ZUVEE DUVEE", [["Our Story", "#philosophy"], ["Our Philosophy", "#process"], ["How We Choose", "#process"], ["Learn", "#learn"]]], ["HELP", [["Contact", "#"], ["Delivery", "#"], ["Returns & Exchanges", "#"], ["FAQ", "#"]]], ["FOLLOW", [["Facebook", "#"], ["Instagram", "#"], ["WhatsApp", "#"]]]].map(([title, links]) => <div className="footer-column" key={title as string}><h3>{title as string}</h3>{(links as string[][]).map(([link, href]) => <a href={href} key={link}>{link}</a>)}</div>)}
         <div className="footer-bottom"><span>© 2026 Zuvee Duvee</span><div><a href="#">Privacy Policy</a><a href="#">Terms & Conditions</a></div><span>Thoughtfully selected in Bangladesh</span></div>
       </footer>
     </main>

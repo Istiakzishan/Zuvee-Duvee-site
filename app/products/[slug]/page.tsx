@@ -65,7 +65,7 @@ export default async function ProductPage({ params }: PageProps) {
     "@type": "BreadcrumbList",
     itemListElement: [
       { "@type": "ListItem", position: 1, name: "Home", item: `${baseUrl}/` },
-      { "@type": "ListItem", position: 2, name: "Products", item: `${baseUrl}/#products` },
+      { "@type": "ListItem", position: 2, name: "Products", item: `${baseUrl}/shop` },
       { "@type": "ListItem", position: 3, name: product.name, item: canonicalUrl },
     ],
   };
@@ -79,11 +79,11 @@ export default async function ProductPage({ params }: PageProps) {
       <div className="announcement">Thoughtfully selected for growing little ones <span>·</span> Delivery across Bangladesh</div>
       <header className="product-header">
         <Link className="logo" href="/" aria-label="Zuvee Duvee home">ZUVEE <i>DUVEE</i></Link>
-        <nav aria-label="Main navigation"><Link href="/#products">Shop</Link><Link href="/#age">Shop by Age</Link><Link href="/#development">Development</Link><Link href="/#learn">Learn</Link><Link href="/#philosophy">Our Story</Link></nav>
-        <div className="header-actions"><LanguageSwitcher /><Link className="header-search" href="/#products">Search</Link><button className="header-account" type="button" data-open-account data-account-label>Account</button><button className="header-bag" type="button" data-open-cart>Bag <span data-cart-count>(0)</span></button></div>
+        <nav aria-label="Main navigation"><Link href="/shop">Shop</Link><Link href="/shop">Shop by Age</Link><Link href="/#development">Development</Link><Link href="/#learn">Learn</Link><Link href="/#philosophy">Our Story</Link></nav>
+        <div className="header-actions"><LanguageSwitcher /><Link className="header-search" href="/shop">Search</Link><button className="header-account" type="button" data-open-account data-account-label>Account</button><button className="header-bag" type="button" data-open-cart>Bag <span data-cart-count>(0)</span></button></div>
       </header>
 
-      <div className="product-breadcrumb" aria-label="Breadcrumb"><Link href="/">Home</Link><span>›</span><Link href="/#products">Products</Link><span>›</span><span aria-current="page"><LangText en={product.shortName} bn={product.shortNameBn} /></span></div>
+      <div className="product-breadcrumb" aria-label="Breadcrumb"><Link href="/">Home</Link><span>›</span><Link href="/shop">Products</Link><span>›</span><span aria-current="page"><LangText en={product.shortName} bn={product.shortNameBn} /></span></div>
 
       <section className="product-detail-hero">
         <div className="product-gallery">
@@ -97,7 +97,7 @@ export default async function ProductPage({ params }: PageProps) {
         <div className="product-summary">
           <p className="eyebrow"><LangText en={`HANDS-ON DISCOVERY · ${product.age}`} bn={`হাতে-কলমে আবিষ্কার · ${product.ageBn}`} /></p>
           <h1><LangText en={product.name} bn={product.nameBn} /></h1>
-          <p className="product-price">{product.price}</p>
+          <p className="product-price"><span>{product.price}</span>{product.isSale && <s>{product.regularPrice}</s>}</p>
           <p className="product-intro"><LangText en={product.intro} bn={product.introBn} /></p>
           <div className="product-tags lang-en">{product.tags.map((tag) => <span key={tag}>{tag}</span>)}</div>
           <div className="product-tags lang-bn">{product.tagsBn.map((tag) => <span key={tag}>{tag}</span>)}</div>
@@ -140,12 +140,12 @@ export default async function ProductPage({ params }: PageProps) {
         <p className="eyebrow"><LangText en={`ACTIVITY TOYS FOR ${product.age}`} bn={`${product.ageBn} বয়সের অ্যাক্টিভিটি টয়`} /></p>
         <h2><LangText en={product.seoTitle} bn={product.seoTitleBn} /></h2>
         <p><LangText en={product.seoCopy} bn={product.seoCopyBn} /></p>
-        <div><Link href="/#age"><LangText en="Explore toys by age →" bn="বয়স অনুযায়ী পণ্য দেখুন →" /></Link><Link href="/#development"><LangText en="Explore by developmental interest →" bn="বিকাশগত আগ্রহ অনুযায়ী দেখুন →" /></Link></div>
+        <div><Link href="/shop"><LangText en="Explore toys by age →" bn="বয়স অনুযায়ী পণ্য দেখুন →" /></Link><Link href="/shop?skill=fine-motor"><LangText en="Explore by developmental interest →" bn="বিকাশগত আগ্রহ অনুযায়ী দেখুন →" /></Link></div>
       </section>
 
       <footer>
         <div className="footer-brand"><Link className="logo" href="/">ZUVEE <i>DUVEE</i></Link><p>You don&apos;t need everything;<br />you need the right things.</p><span>Dhaka, Bangladesh</span></div>
-        {[["SHOP", ["Shop All", "New Arrivals", "Shop by Age", "Shop by Development"]], ["ZUVEE DUVEE", ["Our Story", "Our Philosophy", "How We Choose", "Learn"]], ["HELP", ["Contact", "Delivery", "Returns & Exchanges", "FAQ"]], ["FOLLOW", ["Facebook", "Instagram", "WhatsApp"]]].map(([title, links]) => <div className="footer-column" key={title as string}><h3>{title as string}</h3>{(links as string[]).map(link => <Link href="/#" key={link}>{link}</Link>)}</div>)}
+        {[["SHOP", ["Shop All", "New Arrivals", "Shop by Age", "Shop by Development"]], ["ZUVEE DUVEE", ["Our Story", "Our Philosophy", "How We Choose", "Learn"]], ["HELP", ["Contact", "Delivery", "Returns & Exchanges", "FAQ"]], ["FOLLOW", ["Facebook", "Instagram", "WhatsApp"]]].map(([title, links]) => <div className="footer-column" key={title as string}><h3>{title as string}</h3>{(links as string[]).map(link => <Link href={(title as string) === "SHOP" ? "/shop" : "/#"} key={link}>{link}</Link>)}</div>)}
         <div className="footer-bottom"><span>© 2026 Zuvee Duvee</span><div><a href="#">Privacy Policy</a><a href="#">Terms & Conditions</a></div><span>Thoughtfully selected in Bangladesh</span></div>
       </footer>
     </main>
