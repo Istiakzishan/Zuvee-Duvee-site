@@ -1,5 +1,6 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { useState } from "react";
 import CommerceExperience, { addProductToCart, openAccount, openCart } from "./CommerceExperience";
 import { products } from "./products/product-data";
@@ -28,7 +29,7 @@ function ArrowIcon() {
   return <span aria-hidden="true">↗</span>;
 }
 
-function ProductCard({ product, index }: { product: Product; index: number }) {
+function ProductCard({ product }: { product: Product }) {
   const [liked, setLiked] = useState(false);
   const [added, setAdded] = useState(false);
   const href = `/products/${product.slug}`;
@@ -55,6 +56,15 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
   );
 }
 
+function ProductRail({ children }: { children: ReactNode }) {
+  return (
+    <>
+      <div className="product-scroll">{children}</div>
+      <div className="mobile-rail-dots" aria-hidden="true"><span /><span /><span /></div>
+    </>
+  );
+}
+
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -72,9 +82,9 @@ export default function Home() {
           <a href="#products">Shop</a><a href="#age">Shop by Age</a><a href="#development">Development</a><a href="#learn">Learn</a><a href="#philosophy">Our Story</a>
         </nav>
         <div className="header-actions">
-          <button onClick={() => setSearchOpen(!searchOpen)} aria-expanded={searchOpen}>Search</button>
-          <button className="desktop-only" type="button" onClick={openAccount} data-account-label>Account</button>
-          <button type="button" onClick={openCart}>Bag <span data-cart-count>(0)</span></button>
+          <button className="header-search" onClick={() => setSearchOpen(!searchOpen)} aria-expanded={searchOpen}>Search</button>
+          <button className="header-account" type="button" onClick={openAccount} data-account-label>Account</button>
+          <button className="header-bag" type="button" onClick={openCart}>Bag <span data-cart-count>(0)</span></button>
         </div>
         {searchOpen && <form className="search-panel" onSubmit={(e) => e.preventDefault()}><label htmlFor="search">What are you looking for?</label><input id="search" autoFocus placeholder="Search by product, age or skill" /><button type="button" onClick={() => setSearchOpen(false)}>Close</button></form>}
       </header>
@@ -95,7 +105,7 @@ export default function Home() {
 
       <section className="section product-section" id="products">
         <div className="section-heading split"><div><p className="eyebrow">CAREFULLY CURATED</p><h2>Zuvee Duvee favourites</h2></div><a className="text-link" href="#all-products">View all <ArrowIcon /></a></div>
-        <div className="product-scroll">{products.map((p, i) => <ProductCard product={p} index={i} key={p.name} />)}</div>
+        <ProductRail>{products.map((p) => <ProductCard product={p} key={p.name} />)}</ProductRail>
       </section>
 
       <section className="development-section" id="development">
@@ -128,7 +138,7 @@ export default function Home() {
 
       <section className="section newly-section">
         <div className="section-heading split"><div><p className="eyebrow">JUST ARRIVED</p><h2>Newly selected</h2><p>Recent additions to our carefully curated collection.</p></div><a className="text-link" href="#all-products">View all <ArrowIcon /></a></div>
-        <div className="product-scroll">{products.slice().reverse().slice(0, 3).map((p, i) => <ProductCard product={p} index={i} key={`new-${p.name}`} />)}</div>
+        <ProductRail>{products.slice().reverse().slice(0, 3).map((p) => <ProductCard product={p} key={`new-${p.name}`} />)}</ProductRail>
       </section>
 
       <section className="why-section">

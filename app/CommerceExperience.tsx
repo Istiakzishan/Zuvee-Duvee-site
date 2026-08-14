@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 
 type CartItem = {
   slug: string;
@@ -50,8 +50,8 @@ export function openAccount() {
 }
 
 export default function CommerceExperience() {
-  const [cart, setCart] = useState<CartItem[]>([]);
-  const [account, setAccount] = useState<Account | null>(null);
+  const [cart, setCart] = useState<CartItem[]>(() => readStored<CartItem[]>(cartKey, []));
+  const [account, setAccount] = useState<Account | null>(() => readStored<Account | null>(accountKey, null));
   const [panel, setPanel] = useState<"cart" | "account" | null>(null);
   const [checkoutStep, setCheckoutStep] = useState<CheckoutStep>("cart");
   const [accountMode, setAccountMode] = useState<"login" | "signup">("login");
@@ -65,11 +65,8 @@ export default function CommerceExperience() {
     payment: "Cash on delivery",
     note: "",
   });
-
-  useEffect(() => {
-    setCart(readStored<CartItem[]>(cartKey, []));
-    setAccount(readStored<Account | null>(accountKey, null));
-  }, []);
+  const panelRef = useRef<HTMLElement | null>(null);
+  const previousFocusRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     window.localStorage.setItem(cartKey, JSON.stringify(cart));
@@ -90,6 +87,7 @@ export default function CommerceExperience() {
   useEffect(() => {
     const add = (event: Event) => {
       const item = (event as CustomEvent<CartItem>).detail;
+      previousFocusRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
       setCart((current) => {
         const existing = current.find((entry) => entry.slug === item.slug);
         if (existing) {
@@ -101,10 +99,12 @@ export default function CommerceExperience() {
       setPanel("cart");
     };
     const showCart = () => {
+      previousFocusRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
       setCheckoutStep("cart");
       setPanel("cart");
     };
     const showAccount = () => {
+      previousFocusRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
       setAccountMode(account ? "login" : "signup");
       setPanel("account");
     };
@@ -133,6 +133,43 @@ export default function CommerceExperience() {
       document.removeEventListener("click", click);
     };
   }, [account]);
+
+  useEffect(() => {
+    if (!panel) return;
+    const panelNode = panelRef.current;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    window.setTimeout(() => {
+      const firstFocusable = panelNode?.querySelector<HTMLElement>("button, [href], input, textarea, select, [tabindex]:not([tabindex='-1'])");
+      (firstFocusable || panelNode)?.focus();
+    }, 0);
+
+    const keydown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        closePanel();
+        return;
+      }
+      if (event.key !== "Tab" || !panelNode) return;
+      const focusable = Array.from(panelNode.querySelectorAll<HTMLElement>("button:not([disabled]), [href], input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex='-1'])")).filter((node) => node.offsetParent !== null || node === document.activeElement);
+      if (!focusable.length) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+
+    document.addEventListener("keydown", keydown);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener("keydown", keydown);
+    };
+  }, [panel]);
 
   const total = useMemo(() => cart.reduce((sum, item) => sum + Number(item.priceValue) * item.quantity, 0), [cart]);
   const delivery = cart.length ? 120 : 0;
@@ -174,18 +211,24 @@ export default function CommerceExperience() {
     setCart([]);
   }
 
+  function closePanel() {
+    setPanel(null);
+    window.setTimeout(() => previousFocusRef.current?.focus(), 0);
+  }
+
   if (!panel) return null;
+  const headingId = panel === "cart" ? "commerce-cart-heading" : "commerce-account-heading";
 
   return (
-    <div className="commerce-overlay" role="dialog" aria-modal="true" aria-label={panel === "cart" ? "Shopping bag and checkout" : "Account"}>
-      <button className="commerce-backdrop" type="button" aria-label="Close panel" onClick={() => setPanel(null)} />
-      <aside className="commerce-panel">
+    <div className="commerce-overlay" role="dialog" aria-modal="true" aria-labelledby={headingId}>
+      <button className="commerce-backdrop" type="button" aria-label="Close panel" onClick={closePanel} />
+      <aside className="commerce-panel" ref={panelRef} tabIndex={-1}>
         <div className="commerce-panel-header">
           <div>
             <p className="eyebrow">{panel === "cart" ? "YOUR BAG" : "ACCOUNT"}</p>
-            <h2>{panel === "cart" ? "Complete your order" : account ? "Your account" : "Sign in or create account"}</h2>
+            <h2 id={headingId}>{panel === "cart" ? "Complete your order" : account ? "Your account" : "Sign in or create account"}</h2>
           </div>
-          <button type="button" onClick={() => setPanel(null)} aria-label="Close">Close</button>
+          <button type="button" onClick={closePanel} aria-label="Close">Close</button>
         </div>
 
         {panel === "account" && (
@@ -240,6 +283,10 @@ export default function CommerceExperience() {
                       ))}
                     </div>
                     <div className="order-summary"><p><span>Subtotal</span><b>{formatPrice(total)}</b></p><p><span>Estimated delivery</span><b>{formatPrice(delivery)}</b></p><p><span>Total</span><b>{formatPrice(payable)}</b></p></div>
+                    <div className="checkout-trust" aria-label="Checkout reassurance">
+                      <p><b>Delivery</b><span>Dhaka orders usually arrive in 2-4 business days. We confirm timing before dispatch.</span></p>
+                      <p><b>Returns</b><span>Contact us within 7 days if an item arrives damaged or unsuitable.</span></p>
+                    </div>
                     <button className="checkout-primary" type="button" onClick={startCheckout}>Continue to checkout</button>
                   </>
                 ) : <p className="empty-state">Your bag is empty. Add a product to begin checkout.</p>}
@@ -253,6 +300,7 @@ export default function CommerceExperience() {
                 <label>Phone<input required value={checkout.phone} onChange={(event) => setCheckout({ ...checkout, phone: event.target.value })} placeholder="+880..." /></label>
                 <label>Delivery address<textarea required value={checkout.address} onChange={(event) => setCheckout({ ...checkout, address: event.target.value })} /></label>
                 <label>City<input required value={checkout.city} onChange={(event) => setCheckout({ ...checkout, city: event.target.value })} /></label>
+                <p className="checkout-helper">Your details are used only to confirm this order and arrange delivery.</p>
                 <button type="submit">Continue to payment</button>
               </form>
             )}
@@ -260,6 +308,7 @@ export default function CommerceExperience() {
             {checkoutStep === "payment" && (
               <div className="commerce-form">
                 {["Cash on delivery", "bKash payment", "Card payment"].map((method) => <label className="radio-row" key={method}><input type="radio" checked={checkout.payment === method} onChange={() => setCheckout({ ...checkout, payment: method })} />{method}</label>)}
+                <p className="checkout-helper">{checkout.payment === "Cash on delivery" ? "Pay when your order is delivered. We will call to confirm before dispatch." : checkout.payment === "bKash payment" ? "We will share bKash payment instructions after reviewing your order." : "Card payment is prepared as a demo option. Connect a payment provider before accepting real card payments."}</p>
                 <label>Order note<textarea value={checkout.note} onChange={(event) => setCheckout({ ...checkout, note: event.target.value })} placeholder="Optional delivery note" /></label>
                 <button type="button" onClick={() => setCheckoutStep("review")}>Review order</button>
               </div>
@@ -277,7 +326,7 @@ export default function CommerceExperience() {
               <div className="order-success">
                 <h3>Order received</h3>
                 <p>Your order number is <b>{orderNumber}</b>. We will contact you to confirm delivery and payment details.</p>
-                <button type="button" onClick={() => setPanel(null)}>Done</button>
+                <button type="button" onClick={closePanel}>Done</button>
               </div>
             )}
           </div>

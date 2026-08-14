@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import CommerceExperience from "../../CommerceExperience";
 import ProductPurchase from "../ProductPurchase";
@@ -72,12 +73,12 @@ export default async function ProductPage({ params }: PageProps) {
 
       <div className="announcement">Thoughtfully selected for growing little ones <span>·</span> Delivery across Bangladesh</div>
       <header className="product-header">
-        <a className="logo" href="/" aria-label="Zuvee Duvee home">ZUVEE <i>DUVEE</i></a>
-        <nav aria-label="Main navigation"><a href="/#products">Shop</a><a href="/#age">Shop by Age</a><a href="/#development">Development</a><a href="/#learn">Learn</a><a href="/#philosophy">Our Story</a></nav>
-        <div className="header-actions"><a href="/#products">Search</a><button className="desktop-only" type="button" data-open-account data-account-label>Account</button><button type="button" data-open-cart>Bag <span data-cart-count>(0)</span></button></div>
+        <Link className="logo" href="/" aria-label="Zuvee Duvee home">ZUVEE <i>DUVEE</i></Link>
+        <nav aria-label="Main navigation"><Link href="/#products">Shop</Link><Link href="/#age">Shop by Age</Link><Link href="/#development">Development</Link><Link href="/#learn">Learn</Link><Link href="/#philosophy">Our Story</Link></nav>
+        <div className="header-actions"><Link className="header-search" href="/#products">Search</Link><button className="header-account" type="button" data-open-account data-account-label>Account</button><button className="header-bag" type="button" data-open-cart>Bag <span data-cart-count>(0)</span></button></div>
       </header>
 
-      <div className="product-breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a><span>›</span><a href="/#products">Products</a><span>›</span><span aria-current="page">{product.name}</span></div>
+      <div className="product-breadcrumb" aria-label="Breadcrumb"><Link href="/">Home</Link><span>›</span><Link href="/#products">Products</Link><span>›</span><span aria-current="page">{product.name}</span></div>
 
       <section className="product-detail-hero">
         <div className="product-gallery">
@@ -95,6 +96,7 @@ export default async function ProductPage({ params }: PageProps) {
           <p className="product-intro">{product.intro}</p>
           <div className="product-tags">{product.tags.map((tag) => <span key={tag}>{tag}</span>)}</div>
           <ProductPurchase product={{ slug: product.slug, name: product.name, price: product.price, priceValue: product.priceValue }} />
+          <a className="product-specs-jump" href="#product-details">Product details & specs →</a>
           <div className="product-service-notes"><p><b>Delivery</b><span>Available across Bangladesh</span></p><p><b>Need guidance?</b><span>Ask us if this feels right for your child&apos;s current stage.</span></p></div>
         </div>
       </section>
@@ -111,7 +113,7 @@ export default async function ProductPage({ params }: PageProps) {
         </div>
       </section>
 
-      <section className="product-information">
+      <section className="product-information" id="product-details">
         <div><p className="eyebrow">GOOD TO KNOW</p><h2>Clear details for parents.</h2><p>We keep product information direct so you can decide whether it fits your child and your home.</p></div>
         <div className="product-accordions">
           <details className="product-specs-panel" open>
@@ -132,12 +134,12 @@ export default async function ProductPage({ params }: PageProps) {
         <p className="eyebrow">ACTIVITY TOYS FOR {product.age}</p>
         <h2>{product.seoTitle}</h2>
         <p>{product.seoCopy}</p>
-        <div><a href="/#age">Explore toys by age →</a><a href="/#development">Explore by developmental interest →</a></div>
+        <div><Link href="/#age">Explore toys by age →</Link><Link href="/#development">Explore by developmental interest →</Link></div>
       </section>
 
       <footer>
-        <div className="footer-brand"><a className="logo" href="/">ZUVEE <i>DUVEE</i></a><p>You don&apos;t need everything;<br />you need the right things.</p><span>Dhaka, Bangladesh</span></div>
-        {[["SHOP", ["Shop All", "New Arrivals", "Shop by Age", "Shop by Development"]], ["ZUVEE DUVEE", ["Our Story", "Our Philosophy", "How We Choose", "Learn"]], ["HELP", ["Contact", "Delivery", "Returns & Exchanges", "FAQ"]], ["FOLLOW", ["Facebook", "Instagram", "WhatsApp"]]].map(([title, links]) => <div className="footer-column" key={title as string}><h3>{title as string}</h3>{(links as string[]).map(link => <a href="/#" key={link}>{link}</a>)}</div>)}
+        <div className="footer-brand"><Link className="logo" href="/">ZUVEE <i>DUVEE</i></Link><p>You don&apos;t need everything;<br />you need the right things.</p><span>Dhaka, Bangladesh</span></div>
+        {[["SHOP", ["Shop All", "New Arrivals", "Shop by Age", "Shop by Development"]], ["ZUVEE DUVEE", ["Our Story", "Our Philosophy", "How We Choose", "Learn"]], ["HELP", ["Contact", "Delivery", "Returns & Exchanges", "FAQ"]], ["FOLLOW", ["Facebook", "Instagram", "WhatsApp"]]].map(([title, links]) => <div className="footer-column" key={title as string}><h3>{title as string}</h3>{(links as string[]).map(link => <Link href="/#" key={link}>{link}</Link>)}</div>)}
         <div className="footer-bottom"><span>© 2026 Zuvee Duvee</span><div><a href="#">Privacy Policy</a><a href="#">Terms & Conditions</a></div><span>Thoughtfully selected in Bangladesh</span></div>
       </footer>
     </main>
