@@ -271,6 +271,7 @@ html[data-lang="bn"] .product-tags.lang-bn { display:flex!important; }
 .cart-items article { display:grid; grid-template-columns:1fr auto; gap:18px; align-items:center; padding:18px 0; border-bottom:1px solid var(--line); }
 .cart-items h3 { font-family:var(--display); font-size:24px; font-weight:500; margin-bottom:4px; }
 .cart-items p { margin:0; color:#66726a; font-size:12px; }
+.cart-items article > div:first-child p { margin-top:8px; color:var(--green); font-size:20px!important; font-weight:700; line-height:1.1; }
 .cart-quantity { display:grid; grid-template-columns:44px 34px 44px; align-items:center; border:1px solid var(--line); min-height:44px; text-align:center; }
 .cart-quantity button { border:0; background:transparent; cursor:pointer; color:var(--green); }
 .cart-quantity output { font-size:12px; }
