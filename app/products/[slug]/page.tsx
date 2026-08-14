@@ -4,7 +4,8 @@ import { notFound } from "next/navigation";
 import CommerceExperience from "../../CommerceExperience";
 import LanguageSwitcher from "../../LanguageSwitcher";
 import ProductPurchase from "../ProductPurchase";
-import { getProduct, products } from "../product-data";
+import { products } from "../product-data";
+import { fetchCatalogProduct } from "../../lib/catalog";
 
 const baseUrl = "https://zuvee-duvee.istiakzishan.chatgpt.site";
 
@@ -22,7 +23,7 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const product = getProduct(slug);
+  const product = await fetchCatalogProduct(slug);
   if (!product) return {};
   const canonicalUrl = `${baseUrl}/products/${product.slug}`;
 
@@ -45,7 +46,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function ProductPage({ params }: PageProps) {
   const { slug } = await params;
-  const product = getProduct(slug);
+  const product = await fetchCatalogProduct(slug);
   if (!product) notFound();
 
   const canonicalUrl = `${baseUrl}/products/${product.slug}`;
@@ -102,7 +103,7 @@ export default async function ProductPage({ params }: PageProps) {
           <p className="product-intro"><LangText en={product.intro} bn={product.introBn} /></p>
           <div className="product-tags lang-en">{product.tags.map((tag) => <span key={tag}>{tag}</span>)}</div>
           <div className="product-tags lang-bn">{product.tagsBn.map((tag) => <span key={tag}>{tag}</span>)}</div>
-          <ProductPurchase product={{ slug: product.slug, name: product.name, price: product.price, priceValue: product.priceValue, purchasable: product.purchasable, stock: product.stock }} />
+          <ProductPurchase product={{ productId: product.productId, variantId: product.variantId, slug: product.slug, name: product.name, price: product.price, priceValue: product.priceValue, purchasable: product.purchasable, stock: product.stock }} />
           <a className="product-specs-jump" href="#product-details"><LangText en="Product details & specs →" bn="পণ্যের বিস্তারিত ও স্পেকস →" /></a>
           <div className="product-service-notes"><p><b><LangText en="Delivery" bn="ডেলিভারি" /></b><span><LangText en="Available across Bangladesh" bn="সারা বাংলাদেশে ডেলিভারি উপলভ্য" /></span></p><p><b><LangText en="Need guidance?" bn="সহায়তা দরকার?" /></b><span><LangText en="Ask us if this feels right for your child's current stage." bn="এটি আপনার শিশুর বর্তমান পর্যায়ের জন্য ঠিক কিনা জানতে আমাদের জিজ্ঞেস করুন।" /></span></p></div>
         </div>

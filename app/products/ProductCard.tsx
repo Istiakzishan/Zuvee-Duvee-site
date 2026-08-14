@@ -31,7 +31,7 @@ export default function ProductCard({ product }: { product: ProductDetail }) {
         <button className={`heart ${liked ? "active" : ""}`} type="button" onClick={() => setLiked(!liked)} aria-label={`${liked ? "Remove" : "Add"} ${product.name} ${liked ? "from" : "to"} wishlist`}>
           {liked ? "♥" : "♡"}
         </button>
-        <button className="quick-add" type="button" disabled={!purchasable} onClick={() => { if (!purchasable) return; addProductToCart({ slug: product.slug, name: product.name, price: product.price, priceValue: product.priceValue, quantity: 1 }); setAdded(true); window.setTimeout(() => setAdded(false), 1400); }} aria-label={`Quick add ${product.name} to bag`}>
+        <button className="quick-add" type="button" disabled={!purchasable || !product.variantId} onClick={() => { if (!purchasable || !product.variantId) return; addProductToCart({ productId: product.productId, variantId: product.variantId, slug: product.slug, name: product.name, price: product.price, priceValue: product.priceValue, stock: product.stock, quantity: 1 }); setAdded(true); window.setTimeout(() => setAdded(false), 1400); }} aria-label={`Quick add ${product.name} to bag`}>
           {!inStock ? "Out of stock" : added ? "Added" : "+ Add"}
         </button>
       </div>

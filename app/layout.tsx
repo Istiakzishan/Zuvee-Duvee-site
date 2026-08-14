@@ -9,6 +9,7 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://zuvee-duvee.istiakzishan.chatgpt.site"),
   title: "Zuvee Duvee",
   description: "Thoughtfully selected play and essentials for growing little ones in Bangladesh.",
+  other: { "codex-preview": "development" },
   openGraph: {
     title: "Zuvee Duvee",
     description: "Thoughtfully selected play and essentials for growing little ones in Bangladesh.",

@@ -1,4 +1,6 @@
 export type ProductDetail = {
+  productId?: string;
+  variantId?: string;
   slug: string;
   name: string;
   shortName: string;
