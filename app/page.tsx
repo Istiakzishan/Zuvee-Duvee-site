@@ -3,6 +3,7 @@
 import type { ReactNode } from "react";
 import { useState } from "react";
 import CommerceExperience, { addProductToCart, openAccount, openCart } from "./CommerceExperience";
+import LanguageSwitcher from "./LanguageSwitcher";
 import { products } from "./products/product-data";
 
 type Product = typeof products[number];
@@ -29,28 +30,35 @@ function ArrowIcon() {
   return <span aria-hidden="true">↗</span>;
 }
 
+function LangText({ en, bn }: { en: string; bn: string }) {
+  return <><span className="lang-en">{en}</span><span className="lang-bn">{bn}</span></>;
+}
+
 function ProductCard({ product }: { product: Product }) {
   const [liked, setLiked] = useState(false);
   const [added, setAdded] = useState(false);
   const href = `/products/${product.slug}`;
   const shortTags = product.tags.slice(0, 2);
+  const shortTagsBn = product.tagsBn.slice(0, 2);
+  const purchasable = product.purchasable !== false && Number(product.priceValue) > 0;
   return (
     <article className="product-card">
       <div className="product-image" style={{ backgroundPosition: product.position }}>
         <a className="product-image-link" href={href} aria-label={`View details for ${product.name}`} />
-        <span className="age-pill">{product.age}</span>
+        <span className="age-pill"><LangText en={product.age} bn={product.ageBn} /></span>
         <button className={`heart ${liked ? "active" : ""}`} onClick={() => setLiked(!liked)} aria-label={`${liked ? "Remove" : "Add"} ${product.name} ${liked ? "from" : "to"} wishlist`}>
           {liked ? "♥" : "♡"}
         </button>
-        <button className="quick-add" onClick={() => { addProductToCart({ slug: product.slug, name: product.name, price: product.price, priceValue: product.priceValue, quantity: 1 }); setAdded(true); window.setTimeout(() => setAdded(false), 1400); }} aria-label={`Quick add ${product.name} to bag`}>
-          {added ? "Added" : "+ Add"}
+        <button className="quick-add" disabled={!purchasable} onClick={() => { if (!purchasable) return; addProductToCart({ slug: product.slug, name: product.name, price: product.price, priceValue: product.priceValue, quantity: 1 }); setAdded(true); window.setTimeout(() => setAdded(false), 1400); }} aria-label={`Quick add ${product.name} to bag`}>
+          {!purchasable ? "Soon" : added ? "Added" : "+ Add"}
         </button>
       </div>
       <div className="product-info">
-        <div className="tags">{shortTags.map((tag) => <span key={tag}>{tag}</span>)}</div>
-        <h3><a href={href}>{product.name}</a></h3>
+        <div className="tags lang-en">{shortTags.map((tag) => <span key={tag}>{tag}</span>)}</div>
+        <div className="tags lang-bn">{shortTagsBn.map((tag) => <span key={tag}>{tag}</span>)}</div>
+        <h3><a href={href}><LangText en={product.shortName} bn={product.shortNameBn} /></a></h3>
         <p>{product.price}</p>
-        <a className="product-details-link" href={href}>View product details →</a>
+        <a className="product-details-link" href={href}><LangText en="View product details →" bn="পণ্যের বিস্তারিত দেখুন →" /></a>
       </div>
     </article>
   );
@@ -82,6 +90,7 @@ export default function Home() {
           <a href="#products">Shop</a><a href="#age">Shop by Age</a><a href="#development">Development</a><a href="#learn">Learn</a><a href="#philosophy">Our Story</a>
         </nav>
         <div className="header-actions">
+          <LanguageSwitcher />
           <button className="header-search" onClick={() => setSearchOpen(!searchOpen)} aria-expanded={searchOpen}>Search</button>
           <button className="header-account" type="button" onClick={openAccount} data-account-label>Account</button>
           <button className="header-bag" type="button" onClick={openCart}>Bag <span data-cart-count>(0)</span></button>
@@ -90,12 +99,12 @@ export default function Home() {
       </header>
 
       <section className="hero" id="top">
-        <div className="hero-copy"><p className="eyebrow">PLAY WITH PURPOSE</p><h1>Thoughtfully chosen for growing minds.</h1><p>Development-focused play and essentials, carefully selected for every little stage.</p><div className="button-row"><a className="button primary" href="#age">Shop by Age</a><a className="text-link" href="#products">Explore All Products <ArrowIcon /></a></div></div>
+        <div className="hero-copy"><p className="eyebrow"><LangText en="PLAY WITH PURPOSE" bn="উদ্দেশ্যপূর্ণ খেলা" /></p><h1><LangText en="Thoughtfully chosen for growing minds." bn="বড় হতে থাকা মনের জন্য বিবেচিত নির্বাচন।" /></h1><p><LangText en="Development-focused play and essentials, carefully selected for every little stage." bn="প্রতিটি ছোট পর্যায়ের জন্য বিকাশভিত্তিক খেলা ও প্রয়োজনীয় পণ্য, যত্ন নিয়ে বাছাই করা।" /></p><div className="button-row"><a className="button primary" href="#age"><LangText en="Shop by Age" bn="বয়স অনুযায়ী দেখুন" /></a><a className="text-link" href="#products"><LangText en="Explore All Products" bn="সব পণ্য দেখুন" /> <ArrowIcon /></a></div></div>
         <div className="hero-image" role="img" aria-label="A parent and child sharing a calm moment of play" />
       </section>
 
       <section className="section age-section" id="age">
-        <div className="section-heading centered"><p className="eyebrow">SHOP BY THEIR STAGE</p><h2>Every stage brings something new.</h2><p>Explore thoughtfully selected products for where your little one is right now.</p></div>
+        <div className="section-heading centered"><p className="eyebrow"><LangText en="SHOP BY THEIR STAGE" bn="শিশুর পর্যায় অনুযায়ী" /></p><h2><LangText en="Every stage brings something new." bn="প্রতিটি পর্যায়ে আসে নতুন কিছু।" /></h2><p><LangText en="Explore thoughtfully selected products for where your little one is right now." bn="আপনার শিশুর বর্তমান পর্যায়ের জন্য যত্ন নিয়ে বাছাই করা পণ্য দেখুন।" /></p></div>
         <div className="age-grid">
           {[["4–10 Months", "Discovering the world", "baby"], ["1–3 Years", "Exploring & becoming independent", "toddler"], ["3–6 Years", "Thinking, creating & learning", "preschool"]].map(([title, desc, cls], i) => (
             <a href="#products" className={`age-card ${cls}`} key={title}><div className="age-photo" style={{ backgroundPosition: `${i * 50}% center` }} /><span>0{i + 1}</span><div><h3>{title}</h3><p>{desc}</p></div><b aria-hidden="true">→</b></a>
@@ -104,17 +113,17 @@ export default function Home() {
       </section>
 
       <section className="section product-section" id="products">
-        <div className="section-heading split"><div><p className="eyebrow">CAREFULLY CURATED</p><h2>Zuvee Duvee favourites</h2></div><a className="text-link" href="#all-products">View all <ArrowIcon /></a></div>
+        <div className="section-heading split"><div><p className="eyebrow"><LangText en="CAREFULLY CURATED" bn="যত্ন নিয়ে বাছাই" /></p><h2><LangText en="Zuvee Duvee favourites" bn="Zuvee Duvee পছন্দের পণ্য" /></h2></div><a className="text-link" href="#all-products"><LangText en="View all" bn="সব দেখুন" /> <ArrowIcon /></a></div>
         <ProductRail>{products.map((p) => <ProductCard product={p} key={p.name} />)}</ProductRail>
       </section>
 
       <section className="development-section" id="development">
-        <div className="section-heading light"><p className="eyebrow">FOLLOW THEIR CURIOSITY</p><h2>What are they discovering today?</h2><p>Find play experiences that support the skills they&apos;re beginning to explore.</p></div>
+        <div className="section-heading light"><p className="eyebrow"><LangText en="FOLLOW THEIR CURIOSITY" bn="কৌতূহলকে অনুসরণ করুন" /></p><h2><LangText en="What are they discovering today?" bn="আজ তারা কী আবিষ্কার করছে?" /></h2><p><LangText en="Find play experiences that support the skills they're beginning to explore." bn="যে দক্ষতাগুলো তারা অন্বেষণ শুরু করছে, সেগুলোকে সহায়তা করে এমন খেলা খুঁজুন।" /></p></div>
         <div className="development-grid">{development.map(([title, copy], i) => <a href="#products" key={title} className="development-card"><span>0{i + 1}</span><div><h3>{title}</h3><p>{copy}</p></div><b>↗</b></a>)}</div>
       </section>
 
       <section className="section skill-photo-section">
-        <div className="section-heading split"><div><p className="eyebrow">PLAY THAT SUPPORTS GROWTH</p><h2>Six ways little ones learn through play</h2><p>Happy, everyday play moments connected to the developmental skills families often look for.</p></div><a className="text-link" href="#products">Shop supportive play <ArrowIcon /></a></div>
+        <div className="section-heading split"><div><p className="eyebrow"><LangText en="PLAY THAT SUPPORTS GROWTH" bn="বিকাশে সহায়ক খেলা" /></p><h2><LangText en="Six ways little ones learn through play" bn="খেলার মাধ্যমে শেখার ছয়টি পথ" /></h2><p><LangText en="Happy, everyday play moments connected to the developmental skills families often look for." bn="পরিবার যে বিকাশগত দক্ষতাগুলো খোঁজে, সেগুলোর সঙ্গে যুক্ত আনন্দময় দৈনন্দিন খেলার মুহূর্ত।" /></p></div><a className="text-link" href="#products"><LangText en="Shop supportive play" bn="সহায়ক পণ্য দেখুন" /> <ArrowIcon /></a></div>
         <div className="skill-photo-grid">
           {skillPhotos.map(([title, copy, position], i) => (
             <article className="skill-photo-card" key={title}>
@@ -128,16 +137,16 @@ export default function Home() {
       </section>
 
       <section className="philosophy" id="philosophy">
-        <p className="eyebrow">OUR BELIEF</p><h2>More isn&apos;t always better.</h2><h2 className="accent">The right things matter.</h2><p>Childhood is filled with small moments of discovery. We carefully select products that encourage meaningful play, exploration and growing independence.</p><a className="text-link" href="#process">Our Philosophy <ArrowIcon /></a>
+        <p className="eyebrow"><LangText en="OUR BELIEF" bn="আমাদের বিশ্বাস" /></p><h2><LangText en="More isn't always better." bn="বেশি মানেই সবসময় ভালো নয়।" /></h2><h2 className="accent"><LangText en="The right things matter." bn="সঠিক জিনিসই গুরুত্বপূর্ণ।" /></h2><p><LangText en="Childhood is filled with small moments of discovery. We carefully select products that encourage meaningful play, exploration and growing independence." bn="শৈশব ছোট ছোট আবিষ্কারের মুহূর্তে ভরা। আমরা এমন পণ্য বাছাই করি যা অর্থবহ খেলা, অনুসন্ধান ও ধীরে ধীরে স্বাধীনতাকে উৎসাহ দেয়।" /></p><a className="text-link" href="#process"><LangText en="Our Philosophy" bn="আমাদের দর্শন" /> <ArrowIcon /></a>
       </section>
 
       <section className="story-section">
         <div className="story-image" role="img" aria-label="Small hands exploring an activity toy" />
-        <div className="story-copy"><p className="eyebrow">FINE MOTOR DEVELOPMENT</p><h2>Small hands are learning a lot.</h2><p>Turning, pulling, pressing and grasping give children opportunities to practise controlled hand movements—one curious action at a time.</p><a className="button outline" href="#products">Explore Fine Motor Play</a></div>
+        <div className="story-copy"><p className="eyebrow"><LangText en="FINE MOTOR DEVELOPMENT" bn="ফাইন মোটর বিকাশ" /></p><h2><LangText en="Small hands are learning a lot." bn="ছোট হাত অনেক কিছু শিখছে।" /></h2><p><LangText en="Turning, pulling, pressing and grasping give children opportunities to practise controlled hand movements—one curious action at a time." bn="ঘোরানো, টানা, চাপ দেওয়া ও ধরা শিশুকে নিয়ন্ত্রিত হাতের নড়াচড়া অনুশীলনের সুযোগ দেয়, একেকটি কৌতূহলী কাজের মাধ্যমে।" /></p><a className="button outline" href="#products"><LangText en="Explore Fine Motor Play" bn="ফাইন মোটর পণ্য দেখুন" /></a></div>
       </section>
 
       <section className="section newly-section">
-        <div className="section-heading split"><div><p className="eyebrow">JUST ARRIVED</p><h2>Newly selected</h2><p>Recent additions to our carefully curated collection.</p></div><a className="text-link" href="#all-products">View all <ArrowIcon /></a></div>
+        <div className="section-heading split"><div><p className="eyebrow"><LangText en="JUST ARRIVED" bn="নতুন যোগ হয়েছে" /></p><h2><LangText en="Newly selected" bn="নতুন বাছাই" /></h2><p><LangText en="Recent additions to our carefully curated collection." bn="আমাদের যত্ন নিয়ে বাছাই করা সংগ্রহে সাম্প্রতিক সংযোজন।" /></p></div><a className="text-link" href="#all-products"><LangText en="View all" bn="সব দেখুন" /> <ArrowIcon /></a></div>
         <ProductRail>{products.slice().reverse().slice(0, 3).map((p) => <ProductCard product={p} key={`new-${p.name}`} />)}</ProductRail>
       </section>
 

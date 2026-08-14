@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import CommerceExperience from "../../CommerceExperience";
+import LanguageSwitcher from "../../LanguageSwitcher";
 import ProductPurchase from "../ProductPurchase";
 import { getProduct, products } from "../product-data";
 
@@ -10,6 +11,10 @@ const baseUrl = "https://zuvee-duvee.istiakzishan.chatgpt.site";
 type PageProps = {
   params: Promise<{ slug: string }>;
 };
+
+function LangText({ en, bn }: { en: string; bn: string }) {
+  return <><span className="lang-en">{en}</span><span className="lang-bn">{bn}</span></>;
+}
 
 export function generateStaticParams() {
   return products.map((product) => ({ slug: product.slug }));
@@ -75,10 +80,10 @@ export default async function ProductPage({ params }: PageProps) {
       <header className="product-header">
         <Link className="logo" href="/" aria-label="Zuvee Duvee home">ZUVEE <i>DUVEE</i></Link>
         <nav aria-label="Main navigation"><Link href="/#products">Shop</Link><Link href="/#age">Shop by Age</Link><Link href="/#development">Development</Link><Link href="/#learn">Learn</Link><Link href="/#philosophy">Our Story</Link></nav>
-        <div className="header-actions"><Link className="header-search" href="/#products">Search</Link><button className="header-account" type="button" data-open-account data-account-label>Account</button><button className="header-bag" type="button" data-open-cart>Bag <span data-cart-count>(0)</span></button></div>
+        <div className="header-actions"><LanguageSwitcher /><Link className="header-search" href="/#products">Search</Link><button className="header-account" type="button" data-open-account data-account-label>Account</button><button className="header-bag" type="button" data-open-cart>Bag <span data-cart-count>(0)</span></button></div>
       </header>
 
-      <div className="product-breadcrumb" aria-label="Breadcrumb"><Link href="/">Home</Link><span>›</span><Link href="/#products">Products</Link><span>›</span><span aria-current="page">{product.name}</span></div>
+      <div className="product-breadcrumb" aria-label="Breadcrumb"><Link href="/">Home</Link><span>›</span><Link href="/#products">Products</Link><span>›</span><span aria-current="page"><LangText en={product.shortName} bn={product.shortNameBn} /></span></div>
 
       <section className="product-detail-hero">
         <div className="product-gallery">
@@ -90,40 +95,41 @@ export default async function ProductPage({ params }: PageProps) {
         </div>
 
         <div className="product-summary">
-          <p className="eyebrow">HANDS-ON DISCOVERY · {product.age}</p>
-          <h1>{product.name}</h1>
+          <p className="eyebrow"><LangText en={`HANDS-ON DISCOVERY · ${product.age}`} bn={`হাতে-কলমে আবিষ্কার · ${product.ageBn}`} /></p>
+          <h1><LangText en={product.name} bn={product.nameBn} /></h1>
           <p className="product-price">{product.price}</p>
-          <p className="product-intro">{product.intro}</p>
-          <div className="product-tags">{product.tags.map((tag) => <span key={tag}>{tag}</span>)}</div>
-          <ProductPurchase product={{ slug: product.slug, name: product.name, price: product.price, priceValue: product.priceValue }} />
-          <a className="product-specs-jump" href="#product-details">Product details & specs →</a>
-          <div className="product-service-notes"><p><b>Delivery</b><span>Available across Bangladesh</span></p><p><b>Need guidance?</b><span>Ask us if this feels right for your child&apos;s current stage.</span></p></div>
+          <p className="product-intro"><LangText en={product.intro} bn={product.introBn} /></p>
+          <div className="product-tags lang-en">{product.tags.map((tag) => <span key={tag}>{tag}</span>)}</div>
+          <div className="product-tags lang-bn">{product.tagsBn.map((tag) => <span key={tag}>{tag}</span>)}</div>
+          <ProductPurchase product={{ slug: product.slug, name: product.name, price: product.price, priceValue: product.priceValue, purchasable: product.purchasable }} />
+          <a className="product-specs-jump" href="#product-details"><LangText en="Product details & specs →" bn="পণ্যের বিস্তারিত ও স্পেকস →" /></a>
+          <div className="product-service-notes"><p><b><LangText en="Delivery" bn="ডেলিভারি" /></b><span><LangText en="Available across Bangladesh" bn="সারা বাংলাদেশে ডেলিভারি উপলভ্য" /></span></p><p><b><LangText en="Need guidance?" bn="সহায়তা দরকার?" /></b><span><LangText en="Ask us if this feels right for your child's current stage." bn="এটি আপনার শিশুর বর্তমান পর্যায়ের জন্য ঠিক কিনা জানতে আমাদের জিজ্ঞেস করুন।" /></span></p></div>
         </div>
       </section>
 
       <section className="product-editorial">
-        <div><p className="eyebrow">WHY WE SELECTED IT</p><h2>{product.selectedReason[0]}</h2></div>
-        <div><p>{product.selectedReason[1]}</p><p>It does not promise a developmental outcome. It simply offers age-considered opportunities to practise useful play actions at a child&apos;s own pace.</p></div>
+        <div><p className="eyebrow"><LangText en="WHY WE SELECTED IT" bn="কেন এটি বাছাই করা" /></p><h2><LangText en={product.selectedReason[0]} bn={product.selectedReasonBn[0]} /></h2></div>
+        <div><p><LangText en={product.selectedReason[1]} bn={product.selectedReasonBn[1]} /></p><p><LangText en="It does not promise a developmental outcome. It simply offers age-considered opportunities to practise useful play actions at a child's own pace." bn="এটি কোনো বিকাশগত ফলাফলের প্রতিশ্রুতি দেয় না। এটি শুধু শিশুর নিজের গতিতে প্রয়োজনীয় খেলার কাজ অনুশীলনের বয়স-বিবেচিত সুযোগ দেয়।" /></p></div>
       </section>
 
       <section className="product-benefits" aria-labelledby="development-value">
         <div className="benefit-image"><img src={product.gallery[1].src} alt={product.gallery[1].alt} /></div>
-        <div><p className="eyebrow">DEVELOPMENTAL VALUE</p><h2 id="development-value">What they can explore</h2>
-          <ol>{product.benefits.map((benefit, index) => <li key={benefit.title}><span>{String(index + 1).padStart(2, "0")}</span><div><h3>{benefit.title}</h3><p>{benefit.copy}</p></div></li>)}</ol>
+        <div><p className="eyebrow"><LangText en="DEVELOPMENTAL VALUE" bn="বিকাশগত মূল্য" /></p><h2 id="development-value"><LangText en="What they can explore" bn="তারা কী অন্বেষণ করতে পারে" /></h2>
+          <ol>{product.benefits.map((benefit, index) => <li key={benefit.title}><span>{String(index + 1).padStart(2, "0")}</span><div><h3><LangText en={benefit.title} bn={benefit.titleBn} /></h3><p><LangText en={benefit.copy} bn={benefit.copyBn} /></p></div></li>)}</ol>
         </div>
       </section>
 
       <section className="product-information" id="product-details">
-        <div><p className="eyebrow">GOOD TO KNOW</p><h2>Clear details for parents.</h2><p>We keep product information direct so you can decide whether it fits your child and your home.</p></div>
+        <div><p className="eyebrow"><LangText en="GOOD TO KNOW" bn="জেনে রাখা ভালো" /></p><h2><LangText en="Clear details for parents." bn="অভিভাবকের জন্য পরিষ্কার তথ্য।" /></h2><p><LangText en="We keep product information direct so you can decide whether it fits your child and your home." bn="আপনার শিশু ও ঘরের জন্য পণ্যটি মানানসই কিনা বুঝতে আমরা তথ্য সরাসরি রাখি।" /></p></div>
         <div className="product-accordions">
           <details className="product-specs-panel" open>
-            <summary>Product specs & details</summary>
+            <summary><LangText en="Product specs & details" bn="পণ্যের স্পেকস ও বিস্তারিত" /></summary>
             <div className="product-specs-content">
               <dl className="product-specs-list">
-                {product.specs.map((spec) => <div key={spec.label}><dt>{spec.label}</dt><dd>{spec.value}</dd></div>)}
+                {product.specs.map((spec) => <div key={spec.label}><dt><LangText en={spec.label} bn={spec.labelBn} /></dt><dd><LangText en={spec.value} bn={spec.valueBn} /></dd></div>)}
               </dl>
               <div className="product-detail-notes">
-                {product.details.map((detail) => <article key={detail.title}><h3>{detail.title}</h3><p>{detail.copy}</p></article>)}
+                {product.details.map((detail) => <article key={detail.title}><h3><LangText en={detail.title} bn={detail.titleBn} /></h3><p><LangText en={detail.copy} bn={detail.copyBn} /></p></article>)}
               </div>
             </div>
           </details>
@@ -131,10 +137,10 @@ export default async function ProductPage({ params }: PageProps) {
       </section>
 
       <section className="product-seo-copy">
-        <p className="eyebrow">ACTIVITY TOYS FOR {product.age}</p>
-        <h2>{product.seoTitle}</h2>
-        <p>{product.seoCopy}</p>
-        <div><Link href="/#age">Explore toys by age →</Link><Link href="/#development">Explore by developmental interest →</Link></div>
+        <p className="eyebrow"><LangText en={`ACTIVITY TOYS FOR ${product.age}`} bn={`${product.ageBn} বয়সের অ্যাক্টিভিটি টয়`} /></p>
+        <h2><LangText en={product.seoTitle} bn={product.seoTitleBn} /></h2>
+        <p><LangText en={product.seoCopy} bn={product.seoCopyBn} /></p>
+        <div><Link href="/#age"><LangText en="Explore toys by age →" bn="বয়স অনুযায়ী পণ্য দেখুন →" /></Link><Link href="/#development"><LangText en="Explore by developmental interest →" bn="বিকাশগত আগ্রহ অনুযায়ী দেখুন →" /></Link></div>
       </section>
 
       <footer>
