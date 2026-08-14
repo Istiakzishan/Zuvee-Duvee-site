@@ -12,6 +12,7 @@ export type ProductDetail = {
   regularPriceValue: string;
   isSale: boolean;
   purchasable: boolean;
+  stock: number;
   tags: string[];
   tagsBn: string[];
   ageFilters: string[];
@@ -57,6 +58,7 @@ export const products: ProductDetail[] = [
     regularPriceValue: "1000",
     isSale: true,
     purchasable: true,
+    stock: 7,
     tags: ["Fine motor", "Sensory", "Hand-eye"],
     tagsBn: ["ফাইন মোটর", "সেন্সরি", "হাত-চোখ"],
     ageFilters: ["pending"],
@@ -104,6 +106,7 @@ export const products: ProductDetail[] = [
     regularPriceValue: "780",
     isSale: true,
     purchasable: true,
+    stock: 14,
     tags: ["Matching", "Problem solving", "Fine motor"],
     tagsBn: ["মেলানো", "সমস্যা সমাধান", "ফাইন মোটর"],
     ageFilters: ["1-3", "3-6"],
@@ -151,6 +154,7 @@ export const products: ProductDetail[] = [
     regularPriceValue: "760",
     isSale: true,
     purchasable: true,
+    stock: 4,
     tags: ["Shape recognition", "Sorting", "Hand-eye"],
     tagsBn: ["আকার চেনা", "সাজানো", "হাত-চোখ"],
     ageFilters: ["1-3", "3-6"],
@@ -198,6 +202,7 @@ export const products: ProductDetail[] = [
     regularPriceValue: "640",
     isSale: true,
     purchasable: true,
+    stock: 11,
     tags: ["Logic", "Creativity", "Spatial thinking"],
     tagsBn: ["যুক্তি", "সৃজনশীলতা", "স্থানিক চিন্তা"],
     ageFilters: ["3-6"],
@@ -245,6 +250,7 @@ export const products: ProductDetail[] = [
     regularPriceValue: "1180",
     isSale: true,
     purchasable: true,
+    stock: 8,
     tags: ["Geometry", "Fine motor", "Creativity"],
     tagsBn: ["জ্যামিতি", "ফাইন মোটর", "সৃজনশীলতা"],
     ageFilters: ["3-6"],

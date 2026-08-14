@@ -14,7 +14,8 @@ export default function ProductCard({ product }: { product: ProductDetail }) {
   const href = `/products/${product.slug}`;
   const shortTags = product.tags.slice(0, 2);
   const shortTagsBn = product.tagsBn.slice(0, 2);
-  const purchasable = product.purchasable !== false && Number(product.priceValue) > 0;
+  const inStock = product.stock > 0;
+  const purchasable = product.purchasable !== false && Number(product.priceValue) > 0 && inStock;
 
   return (
     <article className="product-card">
@@ -31,7 +32,7 @@ export default function ProductCard({ product }: { product: ProductDetail }) {
           {liked ? "♥" : "♡"}
         </button>
         <button className="quick-add" type="button" disabled={!purchasable} onClick={() => { if (!purchasable) return; addProductToCart({ slug: product.slug, name: product.name, price: product.price, priceValue: product.priceValue, quantity: 1 }); setAdded(true); window.setTimeout(() => setAdded(false), 1400); }} aria-label={`Quick add ${product.name} to bag`}>
-          {!purchasable ? "Soon" : added ? "Added" : "+ Add"}
+          {!inStock ? "Out of stock" : added ? "Added" : "+ Add"}
         </button>
       </div>
       <div className="product-info">
@@ -42,6 +43,7 @@ export default function ProductCard({ product }: { product: ProductDetail }) {
           <span>{product.price}</span>
           {product.isSale && <s>{product.regularPrice}</s>}
         </p>
+        <p className={`stock-note ${!inStock ? "out-of-stock" : product.stock < 10 ? "low-stock" : ""}`}><LangText en={!inStock ? "Out of stock" : product.stock < 10 ? `Only ${product.stock} in stock` : `${product.stock} in stock`} bn={!inStock ? "স্টকে নেই" : product.stock < 10 ? `মাত্র ${product.stock} টি স্টকে আছে` : `${product.stock} টি স্টকে আছে`} /></p>
         <a className="product-details-link" href={href}><LangText en="View product details →" bn="পণ্যের বিস্তারিত দেখুন →" /></a>
       </div>
     </article>

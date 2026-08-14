@@ -98,10 +98,11 @@ export default async function ProductPage({ params }: PageProps) {
           <p className="eyebrow"><LangText en={`HANDS-ON DISCOVERY · ${product.age}`} bn={`হাতে-কলমে আবিষ্কার · ${product.ageBn}`} /></p>
           <h1><LangText en={product.name} bn={product.nameBn} /></h1>
           <p className="product-price"><span>{product.price}</span>{product.isSale && <s>{product.regularPrice}</s>}</p>
+          <p className={`product-stock ${product.stock === 0 ? "out-of-stock" : product.stock < 10 ? "low-stock" : ""}`}><LangText en={product.stock === 0 ? "Out of stock" : product.stock < 10 ? `Only ${product.stock} in stock` : `${product.stock} in stock`} bn={product.stock === 0 ? "স্টকে নেই" : product.stock < 10 ? `মাত্র ${product.stock} টি স্টকে আছে` : `${product.stock} টি স্টকে আছে`} /></p>
           <p className="product-intro"><LangText en={product.intro} bn={product.introBn} /></p>
           <div className="product-tags lang-en">{product.tags.map((tag) => <span key={tag}>{tag}</span>)}</div>
           <div className="product-tags lang-bn">{product.tagsBn.map((tag) => <span key={tag}>{tag}</span>)}</div>
-          <ProductPurchase product={{ slug: product.slug, name: product.name, price: product.price, priceValue: product.priceValue, purchasable: product.purchasable }} />
+          <ProductPurchase product={{ slug: product.slug, name: product.name, price: product.price, priceValue: product.priceValue, purchasable: product.purchasable, stock: product.stock }} />
           <a className="product-specs-jump" href="#product-details"><LangText en="Product details & specs →" bn="পণ্যের বিস্তারিত ও স্পেকস →" /></a>
           <div className="product-service-notes"><p><b><LangText en="Delivery" bn="ডেলিভারি" /></b><span><LangText en="Available across Bangladesh" bn="সারা বাংলাদেশে ডেলিভারি উপলভ্য" /></span></p><p><b><LangText en="Need guidance?" bn="সহায়তা দরকার?" /></b><span><LangText en="Ask us if this feels right for your child's current stage." bn="এটি আপনার শিশুর বর্তমান পর্যায়ের জন্য ঠিক কিনা জানতে আমাদের জিজ্ঞেস করুন।" /></span></p></div>
         </div>

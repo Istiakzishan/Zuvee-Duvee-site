@@ -56,6 +56,7 @@ export default function CommerceExperience() {
   const [checkoutStep, setCheckoutStep] = useState<CheckoutStep>("cart");
   const [accountMode, setAccountMode] = useState<"login" | "signup">("login");
   const [orderNumber, setOrderNumber] = useState("");
+  const [toast, setToast] = useState("");
   const [checkout, setCheckout] = useState({
     name: "",
     email: "",
@@ -73,6 +74,7 @@ export default function CommerceExperience() {
     const quantity = cart.reduce((sum, item) => sum + item.quantity, 0);
     document.querySelectorAll<HTMLElement>("[data-cart-count]").forEach((node) => {
       node.textContent = `(${quantity})`;
+      node.closest(".header-bag")?.classList.toggle("has-items", quantity > 0);
     });
   }, [cart]);
 
@@ -97,6 +99,8 @@ export default function CommerceExperience() {
       });
       setCheckoutStep("cart");
       setPanel("cart");
+      setToast("Product successfully added to bag");
+      window.setTimeout(() => setToast(""), 2600);
     };
     const showCart = () => {
       previousFocusRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
@@ -216,11 +220,13 @@ export default function CommerceExperience() {
     window.setTimeout(() => previousFocusRef.current?.focus(), 0);
   }
 
-  if (!panel) return null;
+  if (!panel) return toast ? <div className="bag-toast" role="status" aria-live="polite">{toast}</div> : null;
   const headingId = panel === "cart" ? "commerce-cart-heading" : "commerce-account-heading";
 
   return (
-    <div className="commerce-overlay" role="dialog" aria-modal="true" aria-labelledby={headingId}>
+    <>
+      {toast && <div className="bag-toast" role="status" aria-live="polite">{toast}</div>}
+      <div className="commerce-overlay" role="dialog" aria-modal="true" aria-labelledby={headingId}>
       <button className="commerce-backdrop" type="button" aria-label="Close panel" onClick={closePanel} />
       <aside className="commerce-panel" ref={panelRef} tabIndex={-1}>
         <div className="commerce-panel-header">
@@ -332,6 +338,7 @@ export default function CommerceExperience() {
           </div>
         )}
       </aside>
-    </div>
+      </div>
+    </>
   );
 }
