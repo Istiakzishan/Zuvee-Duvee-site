@@ -63,7 +63,7 @@ h1 { font-size:clamp(54px,5.3vw,82px); line-height:.93; max-width:620px; margin-
 .age-photo:after { content:""; position:absolute; inset:25% 0 0; background:linear-gradient(transparent,rgba(21,34,27,.78)); }
 .age-card:hover .age-photo { transform:scale(1.025); }
 .age-card:hover { background:#eef0e9; color:white; }
-.age-card:hover .age-photo { opacity:0; transform:scale(1.025); }
+.age-card:hover .age-photo { transform:scale(1.025); }
 .age-card:hover>b { color:#e0a183; }
 .age-card>span,.age-card>div,.age-card>b { position:relative; z-index:1; }
 .age-card>span { font-size:11px; opacity:.7; align-self:start; }
