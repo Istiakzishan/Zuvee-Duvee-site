@@ -115,7 +115,7 @@ export default async function ProductPage({ params }: PageProps) {
       </section>
 
       <section className="product-benefits" aria-labelledby="development-value">
-        <div className="benefit-image"><img src={product.gallery[1].src} alt={product.gallery[1].alt} /></div>
+        <div className="benefit-image"><img src={(product.gallery[1] ?? product.gallery[0]).src} alt={(product.gallery[1] ?? product.gallery[0]).alt} /></div>
         <div><p className="eyebrow"><LangText en="DEVELOPMENTAL VALUE" bn="বিকাশগত মূল্য" /></p><h2 id="development-value"><LangText en="What they can explore" bn="তারা কী অন্বেষণ করতে পারে" /></h2>
           <ol>{product.benefits.map((benefit, index) => <li key={benefit.title}><span>{String(index + 1).padStart(2, "0")}</span><div><h3><LangText en={benefit.title} bn={benefit.titleBn} /></h3><p><LangText en={benefit.copy} bn={benefit.copyBn} /></p></div></li>)}</ol>
         </div>
