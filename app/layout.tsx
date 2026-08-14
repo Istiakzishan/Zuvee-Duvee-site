@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond, DM_Sans } from "next/font/google";
+import CommerceExperience from "./CommerceExperience";
 import "./globals.css";
 
 const display = Cormorant_Garamond({ variable: "--font-display", subsets: ["latin"], weight: ["400", "500", "600"] });
@@ -21,5 +22,5 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="en"><body className={`${display.variable} ${sans.variable}`}>{children}</body></html>;
+  return <html lang="en"><body className={`${display.variable} ${sans.variable}`}><CommerceExperience supabaseUrl={process.env.SUPABASE_URL ?? ""} publishableKey={process.env.SUPABASE_PUBLISHABLE_KEY ?? ""}>{children}</CommerceExperience></body></html>;
 }
