@@ -3,8 +3,8 @@
 import { useEffect, useState } from "react";
 import { products as fallbackProducts, type ProductDetail } from "./product-data";
 
-export function useCatalogProducts() {
-  const [products, setProducts] = useState<ProductDetail[]>(fallbackProducts);
+export function useCatalogProducts(initialProducts?: ProductDetail[]) {
+  const [products, setProducts] = useState<ProductDetail[]>(initialProducts?.length ? initialProducts : fallbackProducts);
 
   useEffect(() => {
     const controller = new AbortController();

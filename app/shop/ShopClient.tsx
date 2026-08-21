@@ -52,8 +52,8 @@ function matchesPrice(price: number, selectedPrice: string) {
   return true;
 }
 
-export default function ShopClient({ initialParams }: { initialParams: InitialParams }) {
-  const products = useCatalogProducts();
+export default function ShopClient({ initialParams, initialProducts }: { initialParams: InitialParams; initialProducts?: ProductDetail[] }) {
+  const products = useCatalogProducts(initialProducts);
   const [menuOpen, setMenuOpen] = useState(false);
   const [selectedAge, setSelectedAge] = useState(initialParams.age || "");
   const [selectedSkills, setSelectedSkills] = useState<string[]>(initialParams.skill ? [initialParams.skill] : []);

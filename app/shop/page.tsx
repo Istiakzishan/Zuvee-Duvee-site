@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import ShopClient from "./ShopClient";
+import { fetchCatalog } from "../lib/catalog";
 
 export const metadata: Metadata = {
   title: "Shop developmental toys by age and skill | Zuvee Duvee",
@@ -12,5 +13,6 @@ type ShopPageProps = {
 
 export default async function ShopPage({ searchParams }: ShopPageProps) {
   const params = await searchParams;
-  return <ShopClient initialParams={params} />;
+  const initialProducts = await fetchCatalog().catch(() => []);
+  return <ShopClient initialParams={params} initialProducts={initialProducts} />;
 }
