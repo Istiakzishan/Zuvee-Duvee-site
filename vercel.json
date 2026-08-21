@@ -1,6 +1,5 @@
 {
-  "framework": null,
+  "framework": "nextjs",
   "installCommand": "npm install",
-  "buildCommand": "npm run build:netlify",
-  "outputDirectory": "netlify-dist"
+  "buildCommand": "npx next build"
 }

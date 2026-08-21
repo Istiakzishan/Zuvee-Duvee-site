@@ -5,6 +5,7 @@ import Link from "next/link";
 import { openAccount, openCart } from "../CommerceExperience";
 import LanguageSwitcher from "../LanguageSwitcher";
 import ProductCard from "../products/ProductCard";
+import type { ProductDetail } from "../products/product-data";
 import { useCatalogProducts } from "../products/useCatalogProducts";
 
 type InitialParams = {
